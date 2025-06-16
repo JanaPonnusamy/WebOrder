@@ -1,0 +1,110 @@
+/* Global reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Global styles and layout */
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f7fa;
+    margin: 0;
+    padding: 10px;
+}
+table {
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+.row {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+.column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.left, .center, .right {
+    padding: 10px;
+    background: #fff;
+    border-radius: 5px;
+}
+/* Grid/Table styling */
+.grid {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fafafa;
+    border: 1px solid #ccc;
+}
+/* More specific selector for table cells */
+#dgvMain tr td,
+#dgvMain tr th {
+    height: 25px !important;
+    min-height: 25px !important;
+    max-height: 25px !important;
+    padding: 6px 3px !important;
+    font-size: 10px !important;
+    line-height: 1 !important;
+    vertical-align: middle !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+    border: 1px solid #ddd !important;
+    text-align: center !important; /* Center the text */
+}
+/* Ensure row height consistency */
+#dgvMain tr {
+    height: 25px !important;
+    min-height: 25px !important;
+    max-height: 25px !important;
+}
+/* Input field inside table cells */
+.grid input[type="number"] {
+    height: 14px !important;
+    padding: 0 !important;
+    font-size: 10px !important;
+    line-height: 1 !important;
+    margin: 0 !important;
+    border: 1px solid #ccc !important;
+    box-sizing: border-box !important;
+    display: block;
+    width: 55px !important;
+    text-align: center !important; /* Center the text inside the input */
+    vertical-align: middle !important; /* Center the input vertically */
+    margin-top: -2px !important; /* Adjust this value as needed to fine-tune vertical alignment */
+}
+/* Optional chart placeholder */
+.chart-placeholder {
+    height: 200px;
+    background: #d1eaff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    color: #0077cc;
+}
+/* Additional specificity for S.No, Qty, and Unit columns */
+#dgvMain tr td:nth-child(1),
+#dgvMain tr th:nth-child(1) {
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+#dgvMain tr td:nth-child(4),
+#dgvMain tr th:nth-child(4) {
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+#dgvMain tr td:nth-child(6),
+#dgvMain tr th:nth-child(6) {
+    text-align: center !important;
+    vertical-align: middle !important;
+}

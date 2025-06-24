@@ -1,0 +1,16 @@
+﻿[
+  {
+    "username": "117",
+    "password": "pass",
+    "suppliercode": "117",
+    "suppliername": "NATHAN MEDICAL AGENCIES",
+    "GSTNumber": "Test"
+  },
+  {
+    "username": "PALEPU",
+    "password": "pass",
+    "suppliercode": "PALEPU",
+    "suppliername": "PALEPU PHARMA DISTRIBUTORS PVT LTD",
+    "GSTNumber": "Test"
+  }
+]

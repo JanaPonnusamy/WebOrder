@@ -1,0 +1,72 @@
+﻿[
+  {
+    "StoreCode": "1",
+    "StoreName": "GUGAI",
+    "StoreFullName": "",
+    "Address1": "",
+    "Address2": ""
+  },
+  {
+    "StoreCode": "2",
+    "StoreName": "Four Roads",
+    "StoreFullName": "",
+    "Address1": "",
+    "Address2": ""
+  },
+  {
+    "StoreCode": "3",
+    "StoreName": "Agraharam",
+    "StoreFullName": "",
+    "Address1": "",
+    "Address2": ""
+  },
+  {
+    "StoreCode": "4",
+    "StoreName": "Chennai",
+    "StoreFullName": "",
+    "Address1": "",
+    "Address2": ""
+  },
+  {
+    "StoreCode": "5",
+    "StoreName": "Prithvi",
+    "StoreFullName": "",
+    "Address1": "",
+    "Address2": ""
+  },
+  {
+    "StoreCode": "6",
+    "StoreName": "NMS",
+    "StoreFullName": "Nathan Medicals S",
+    "Address1": "Near Police Station",
+    "Address2": "Perundurai"
+  },
+  {
+    "StoreCode": "7",
+    "StoreName": "NMC",
+    "StoreFullName": "Nathan Medicals C",
+    "Address1": "Old Bus Stand",
+    "Address2": "Perundurai"
+  },
+  {
+    "StoreCode": "8",
+    "StoreName": "NMG",
+    "StoreFullName": "Nathan Medicals G",
+    "Address1": "Near Girls School",
+    "Address2": "Perundurai"
+  },
+  {
+    "StoreCode": "9",
+    "StoreName": "NMA",
+    "StoreFullName": "Nathan Medicals",
+    "Address1": "Near Boys School",
+    "Address2": "Perundurai"
+  },
+  {
+    "StoreCode": "10",
+    "StoreName": "SMA",
+    "StoreFullName": "",
+    "Address1": "",
+    "Address2": ""
+  }
+]

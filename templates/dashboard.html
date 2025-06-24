@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Management Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+    <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
+    <script src="https://unpkg.com/jspdf-autotable@3.5.16/dist/jspdf.plugin.autotable.js"></script>
+    <style>
+        /* Modernized Color Palette & Typography */
+        :root {
+            --primary-color: #007bff; /* Vibrant Blue */
+            --secondary-color: #0056b3; /* Darker Vibrant Blue */
+            --background-color: #f0f2f5; /* Lighter background */
+            --card-color: #ffffff;
+            --text-color: #333333;
+            --border-color: #e0e0e0;
+            --success-color: #28a745; /* Deeper Green */
+            --warning-color: #ffc107; /* Brighter Yellow */
+            --danger-color: #dc3545; /* Stronger Red */
+            --info-color: #17a2b8; /* Teal Blue */
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* More prominent shadow */
+            --transition: all 0.3s ease;
+            --reset-button-color: #dc3545; /* Strong Red */
+            --reset-button-hover: #c82333; /* Darker Strong Red */
+            --logout-button-color: #dc3545; /* Red for Logout */ /* MODIFIED */
+            --logout-button-hover: #c82333; /* Darker Red for Logout */ /* MODIFIED */
+
+            /* New specific colors for distinct sections */
+            --header-bg-start: #6a11cb; /* Purple */ /* ADDED */
+            --header-bg-end: #2575fc; /* Blue */ /* ADDED */
+            --details-bg-color: #e6eefc; /* Light Blue for details section */ /* ADDED */
+            --details-text-color: #444444; /* Darker text for details section */ /* ADDED */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Changed font */
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--header-bg-start), var(--header-bg-end)); /* MODIFIED */
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white; /* Text color for header */ /* ADDED */
+        }
+
+        .header h1 {
+            font-size: 28px; /* Slightly larger */ /* MODIFIED */
+            color: white; /* White for header text */ /* MODIFIED */
+            font-weight: 800; /* Bolder */ /* MODIFIED */
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2); /* Subtle text shadow */ /* ADDED */
+        }
+
+        .table-container {
+            background-color: var(--card-color);
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px; /* MODIFIED: Reduced padding for height */
+            background-color: #e9ecef; /* Lighter background for header */
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .table-header h2 {
+            font-size: 18px; /* Slightly smaller */ /* MODIFIED */
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .table-info {
+            font-size: 13px; /* Slightly smaller */ /* MODIFIED */
+            color: #666;
+        }
+
+        .grid {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fafafa;
+            border: 1px solid #ccc;
+        }
+
+        .grid tr {
+            height: auto !important;
+            min-height: 38px !important;
+        }
+        
+        .grid th,
+        .grid td {
+            height: auto !important;
+            min-height: 38px !important;
+            padding: 6px 8px !important;
+            font-size: 14px !important;
+            line-height: 1.5 !important;
+            vertical-align: middle !important;
+            box-sizing: border-box !important;
+            border: 1px solid #ddd !important;
+            text-align: left !important;
+            white-space: nowrap !important; 
+            overflow: hidden !important; 
+        }
+
+        .grid th {
+            font-size: 14px !important;
+            font-weight: bold;
+            background-color: #e9ecef;
+            color: #495057;
+            text-transform: uppercase;
+        }
+
+        /* Specific alignments */
+        .grid th:nth-child(1),
+        .grid td:nth-child(1) {
+            text-align: center !important;
+            width: 60px;
+        }
+        .grid th:nth-child(4),
+        .grid td:nth-child(4) {
+            text-align: right !important;
+            width: 80px;
+        }
+        .grid th:nth-child(5),
+        .grid td:nth-child(5) {
+            text-align: right !important;
+            width: 90px;
+        }
+        .grid th:nth-child(6),
+        .grid td:nth-child(6) {
+            text-align: center !important;
+            width: 100px;
+        }
+        .grid th:nth-child(7),
+        .grid td:nth-child(7) {
+            text-align: right !important;
+            width: 100px;
+        }
+        .grid th:nth-child(3) {
+            width: 350px; 
+        }
+
+        .grid th:nth-child(8) {
+            width: 400px;
+        }
+
+        .grid td.remark-cell {
+            white-space: normal !important;
+            overflow: visible !important;
+            word-break: break-word;
+            height: auto !important;
+            max-height: none !important;
+            line-height: 1.5;
+            padding-right: 5px;
+        }
+        
+        .remark-content {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+        }
+
+        .remark-content i {
+            font-size: 14px;
+        }
+
+        .status-available {
+            color: var(--success-color);
+        }
+
+        .status-danger {
+            color: var(--danger-color);
+        }
+
+        .status-warning {
+            color: var(--warning-color);
+        }
+
+        .status-info {
+            color: var(--info-color);
+        }
+
+        .grid input[type="number"],
+        .grid input[type="text"] {
+            height: 28px !important;
+            padding: 2px 4px !important;
+            font-size: 14px !important;
+            line-height: 1.5 !important;
+            margin: 0 !important;
+            border: 1px solid #ccc !important;
+            border-radius: 4px;
+            box-sizing: border-box !important;
+            display: block;
+            width: 100% !important;
+            text-align: center;
+        }
+        .grid input[type="text"].remark-input {
+            text-align: left;
+            white-space: normal;
+            height: auto;
+            min-height: 28px;
+        }
+
+        .grid td input[type="number"] {
+            text-align: right;
+        }
+
+
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+            display: none;
+        }
+
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 10px 20px; /* Increased padding */
+            border-top: 1px solid var(--border-color);
+            background-color: #e9ecef; /* Match table header */
+            border-radius: 0 0 8px 8px; /* Apply border radius to bottom actions */
+        }
+
+        .actions-right {
+            display: flex;
+            gap: 10px;
+        }
+
+        .actions-left {
+            display: flex;
+            gap: 10px;
+        }
+
+
+        .btn {
+            padding: 10px 20px; /* Larger padding */
+            border: none;
+            border-radius: 8px; /* More rounded */
+            cursor: pointer;
+            font-size: 15px; /* Slightly larger font */
+            font-weight: 600; /* Bolder text */
+            transition: var(--transition);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for all buttons */
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* More prominent hover shadow */
+        }
+
+        .btn-reset {
+            background-color: var(--reset-button-color);
+            color: white;
+        }
+
+        .btn-reset:hover {
+            background-color: var(--reset-button-hover);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Specific colors for export buttons */
+        #btnExportExcel {
+            background-color: #217346; /* Excel Green */
+        }
+        #btnExportExcel:hover {
+            background-color: #1a5c38;
+        }
+
+        #btnExportPDF {
+            background-color: #b30b00; /* PDF Red */
+        }
+        #btnExportPDF:hover {
+            background-color: #8c0800;
+        }
+
+        #btnExportCSV {
+            background-color: #007bff; /* CSV Blue */
+        }
+        #btnExportCSV:hover {
+            background-color: #0056b3;
+        }
+
+        #btnExportTXT {
+            background-color: #6c757d; /* TXT Gray */
+        }
+        #btnExportTXT:hover {
+            background-color: #5a6268;
+        }
+
+        .btn-export { /* General export button styling, specific colors override this */
+            color: white;
+        }
+
+        /* Colorful icons inside export buttons */
+        .btn-export i {
+            margin-right: 8px; /* Space between icon and text */
+        }
+
+        .logout-btn {
+            background-color: var(--logout-button-color); /* MODIFIED */
+            color: white;
+            padding: 10px 20px; /* Match other buttons */
+            border: none;
+            border-radius: 8px; /* More rounded */
+            cursor: pointer;
+            font-size: 15px; /* Slightly larger font */
+            font-weight: 600; /* Bolder text */
+            transition: var(--transition);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .logout-btn:hover {
+            background-color: var(--logout-button-hover); /* MODIFIED */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            display: none;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            box-shadow: var(--shadow);
+        }
+
+        .notification.show {
+            display: block;
+            opacity: 1;
+        }
+
+        .notification.success { background-color: var(--success-color); }
+        .notification.error { background-color: var(--danger-color); }
+        .notification.info { background-color: var(--info-color); }
+        .notification.warning { background-color: var(--warning-color); }
+
+
+        .pagination-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px; /* Increased gap */
+            padding: 12px; /* Increased padding */
+            background-color: #f5f7fa;
+            border-top: 1px solid var(--border-color);
+            border-radius: 0 0 8px 8px;
+        }
+
+        .pagination-controls button {
+            padding: 8px 16px; /* Larger padding for pagination buttons */
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background-color: var(--card-color);
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 14px; /* Consistent font size */
+            transition: var(--transition);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); /* Subtle shadow */
+        }
+
+        .pagination-controls button:hover:not(.active):not(:disabled) {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+        }
+
+        .pagination-controls button.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            cursor: default;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+        }
+
+        .pagination-controls button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination-ellipsis {
+            font-size: 16px;
+            font-weight: bold;
+            color: #999;
+            padding: 0 5px;
+        }
+
+        .details-section {
+            background-color: var(--details-bg-color); /* MODIFIED */
+            color: var(--details-text-color); /* MODIFIED */
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            font-size: 15px; /* Slightly larger font */
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 20px; /* Increased gaps */
+            justify-content: space-between;
+            border: 1px solid rgba(0, 0, 0, 0.05); /* Subtle border */ /* ADDED */
+        }
+
+        .details-section div {
+            flex: 1 1 auto;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Order Management Dashboard</h1>
+            <a href="/logout" class="logout-btn">Logout</a>
+        </div>
+
+        <div class="details-section">
+            <div><strong>Order ID:</strong> 202506244719</div>
+            <div><strong>Store Details:</strong> Nathan Medicals C, Old Bus Stand, Perundurai</div>
+            <div><strong>Supplier Details:</strong> NATHAN MEDICAL AGENCIES</div>
+            <div><strong>Test</strong></div>
+        </div>
+
+        <div class="table-container">
+            <div class="table-header">
+                <h2>Order Details</h2>
+                <div class="table-info" id="table-info">Loading...</div>
+            </div>
+            <div style="position: relative; min-height: 300px; overflow-y: auto;">
+                <table id="dgvMain" class="grid">
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th style="width: 120px;">Product Code</th>
+                            <th style="width: 350px;">Product Name</th>
+                            <th style="width: 80px; text-align: right;">Order Qty</th>
+                            <th style="width: 90px; text-align: right;">Edited Qty</th>
+                            <th style="width: 100px; text-align: center;">Unit</th>
+                            <th style="width: 100px; text-align: right;">MRP</th>
+                            <th style="width: 400px;">Remarks</th> </tr>
+                    </thead>
+                    <tbody id="orderTableBody">
+                        </tbody>
+                </table>
+                <div class="loading-overlay" id="loading-overlay">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+            <div class="pagination-controls" id="pagination-controls">
+                </div>
+            <div class="actions">
+                <div class="actions-left">
+                    <button class="btn btn-export" id="btnExportExcel"><i class="fas fa-file-excel"></i> Excel</button>
+                    <button class="btn btn-export" id="btnExportPDF"><i class="fas fa-file-pdf"></i> PDF</button>
+                    <button class="btn btn-export" id="btnExportCSV"><i class="fas fa-file-csv"></i> CSV</button>
+                    <button class="btn btn-export" id="btnExportTXT"><i class="fas fa-file-alt"></i> TXT</button>
+                </div>
+                <div class="actions-right">
+                    <button class="btn btn-reset" id="btnReset"><i class="fas fa-undo"></i> Reset</button>
+                    <button class="btn btn-primary" id="btnSubmit"><i class="fas fa-save"></i> Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="notification" class="notification"></div>
+
+    <script>
+        // Raw JavaScript content to prevent Jinja2 parsing errors within the script
+        {% raw %} 
+        const orderTableBody = document.getElementById('orderTableBody');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const notification = document.getElementById('notification');
+        const tableInfo = document.getElementById('table-info');
+        const paginationContainer = document.getElementById('pagination-controls');
+        const btnSubmit = document.getElementById('btnSubmit');
+        const btnReset = document.getElementById('btnReset');
+        const btnExportExcel = document.getElementById('btnExportExcel');
+        const btnExportPDF = document.getElementById('btnExportPDF');
+        const btnExportCSV = document.getElementById('btnExportCSV');
+        const btnExportTXT = document.getElementById('btnExportTXT');
+
+
+        let allData = []; // Stores all fetched data for the current supplier and store
+        let currentPage = 1;
+        const ITEMS_PER_PAGE = 20; // Number of items to display per page
+        let totalItems = 0; // Total number of items fetched from the backend
+
+        /**
+         * Displays a notification message.
+         * @param {string} title - The title of the notification.
+         * @param {string} message - The message to display.
+         * @param {string} type - 'success', 'error', 'info', or 'warning'.
+         */
+        function showNotification(title, message, type) {
+            notification.textContent = `${title}: ${message}`;
+            notification.className = `notification show ${type}`; // Add type class
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        /**
+         * Shows the loading overlay.
+         */
+        function showLoading() {
+            loadingOverlay.style.display = 'flex';
+        }
+
+        /**
+         * Hides the loading overlay.
+         */
+        function hideLoading() {
+            loadingOverlay.style.display = 'none';
+        }
+
+        /**
+         * Fetches order data from the backend.
+         * @param {number} page - The page number to fetch.
+         */
+        async function loadOrders(page = 1) {
+            showLoading();
+            currentPage = page; // Set the current page
+
+            // Note: 'suppliercode' is implicitly handled by the session on the backend.
+            // 'storename' is passed as a query parameter.
+            const url = `/get_orders?page=${currentPage}&per_page=${ITEMS_PER_PAGE}&storename=NMC`;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    const errorText = await response.text(); // Get more detailed error from response
+                    throw new Error(`Network response was not ok: ${response.status} ${response.statusText} - ${errorText}`);
+                }
+                const result = await response.json();
+                allData = result.data; // Store the paginated data
+                totalItems = result.total_count; // Store the total count
+
+                renderTable(); // Render the current page data
+                createPagination(); // Create/update pagination buttons
+            } catch (error) {
+                console.error('Error loading orders:', error);
+                showNotification('Error', 'Failed to load order data. Check console for details.', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        /**
+         * Renders the current page of order data into the table.
+         */
+        function renderTable() {
+            orderTableBody.innerHTML = ''; // Clear existing table rows
+
+            if (allData.length === 0) {
+                const noDataRow = document.createElement('tr');
+                // Colspan remains 8 based on the current column count (S.No, PC, PN, OQ, EQ, Unit, MRP, Remarks)
+                noDataRow.innerHTML = `<td colspan="8" style="text-align: center; padding: 20px;">No Orders Found for this selection.</td>`;
+                orderTableBody.appendChild(noDataRow);
+                updateTableInfo();
+                return;
+            }
+
+            allData.forEach((rowData) => {
+                const tr = document.createElement('tr');
+                // Store all relevant data as dataset attributes on the row for easy retrieval
+                tr.dataset.productcode = rowData.ProductCode;
+                tr.dataset.productname = rowData.ProductName;
+                tr.dataset.saleunit = rowData.SaleUnit;
+                tr.dataset.orderid = rowData.OrderId;
+                tr.dataset.storename = rowData.StoreName; // Keep for backend if needed
+                tr.dataset.originalorderqty = rowData.OrderQty; // Store original quantity
+                // Removed unused dataset attributes: storecode, wantedtype, lastreceiveddate, lastsaledate, producttypename
+
+                // Create the editable input for remarks
+                const remarksInput = document.createElement('input');
+                remarksInput.type = 'text';
+                remarksInput.value = rowData.Remarks || '';
+                remarksInput.placeholder = 'Enter remarks...';
+                remarksInput.classList.add('remark-input');
+                remarksInput.dataset.originalvalue = rowData.Remarks || ''; // Store original remarks value
+
+                // Create a div to display the remarks with icon
+                const remarksDisplay = document.createElement('div');
+                remarksDisplay.classList.add('remark-content');
+                
+                remarksInput.addEventListener('input', (event) => {
+                    const currentEditedQty = parseInt(tr.querySelector('input[type="number"]').value, 10);
+                    updateRemarkDisplay(remarksDisplay, event.target.value, currentEditedQty, parseInt(tr.dataset.originalorderqty, 10));
+                });
+
+                const editQtyInput = document.createElement('input');
+                editQtyInput.type = 'number';
+                editQtyInput.value = rowData.OrderQty;
+                editQtyInput.min = 0; // Ensure non-negative
+                editQtyInput.dataset.originalvalue = rowData.OrderQty; // Store original for comparison
+                editQtyInput.addEventListener('input', (event) => {
+                    let newValue = event.target.value.trim();
+                    if (newValue === '' || isNaN(newValue)) {
+                        newValue = 0; // Treat empty or invalid input as 0
+                        event.target.value = ''; // Keep input empty visually
+                    } else {
+                        newValue = parseInt(newValue, 10);
+                        event.target.value = newValue; // Update input field (removes leading zeros, etc.)
+                    }
+                    updateRemarkDisplay(remarksDisplay, remarksInput.value, newValue, parseInt(rowData.OrderQty, 10));
+                });
+                
+                // Format MRP to 2 decimal places
+                const formattedMRP = rowData.MRP && !isNaN(parseFloat(rowData.MRP)) ? parseFloat(rowData.MRP).toFixed(2) : '0.00';
+
+                // Set the innerHTML of the row with correct columns and placeholders
+                // Order: S.No, Product Code, Product Name, Order Qty, Edited Qty, Unit, MRP, Remarks
+                tr.innerHTML = `
+                    <td>${rowData.SerialNo}</td>
+                    <td>${rowData.ProductCode}</td>
+                    <td>${rowData.ProductName}</td>
+                    <td style="text-align: right;">${rowData.OrderQty}</td>
+                    <td id="edit-qty-cell-${rowData.ProductCode}-${rowData.OrderId}"></td>
+                    <td style="text-align: center;">${rowData.SaleUnit || ''}</td>
+                    <td style="text-align: right;">${formattedMRP}</td>
+                    <td id="remark-cell-${rowData.ProductCode}-${rowData.OrderId}"></td>
+                `;
+                
+                // Append the dynamically created inputs to their respective cells
+                tr.querySelector(`#edit-qty-cell-${rowData.ProductCode}-${rowData.OrderId}`).appendChild(editQtyInput);
+                const remarkCellElement = tr.querySelector(`#remark-cell-${rowData.ProductCode}-${rowData.OrderId}`);
+                remarkCellElement.appendChild(remarksDisplay);
+                remarkCellElement.appendChild(remarksInput);
+                remarkCellElement.classList.add('remark-cell'); // Add the class here
+
+                // Initial update of remarks based on original OrderQty and Remarks (for icons)
+                updateRemarkDisplay(remarksDisplay, rowData.Remarks, rowData.OrderQty, rowData.OrderQty);
+
+                orderTableBody.appendChild(tr);
+            });
+            updateTableInfo();
+        }
+
+        /**
+         * Updates the remark cell content and icon based on remark text and quantity changes.
+         * @param {HTMLElement} displayElement - The div element where the remark content will be displayed.
+         * @param {string} remarkText - The current text in the remarks input.
+         * @param {number} currentQty - The current value in the Edited Qty input.
+         * @param {number} originalOrderQty - The original OrderQty for the product.
+         */
+        function updateRemarkDisplay(displayElement, remarkText, currentQty, originalOrderQty) {
+            let iconClass = '';
+            let statusClass = '';
+            let displayedText = remarkText;
+
+            // Normalize values for comparison
+            remarkText = (remarkText || '').trim();
+            currentQty = parseInt(currentQty, 10);
+            originalOrderQty = parseInt(originalOrderQty, 10);
+
+            // Determine status based on standard remarks first
+            if (remarkText === 'Not Available') {
+                iconClass = 'fas fa-times-circle';
+                statusClass = 'status-danger';
+            } else if (remarkText === 'Only Available Edit Qty') {
+                iconClass = 'fas fa-exclamation-circle';
+                statusClass = 'status-warning';
+            } else if (remarkText === 'Qty Increased') {
+                iconClass = 'fas fa-arrow-alt-circle-up';
+                statusClass = 'status-info';
+            } else if (remarkText === 'Available' || remarkText === '') { // If remarks is empty or "Available"
+                iconClass = 'fas fa-check-circle';
+                statusClass = 'status-available';
+                if (remarkText === '') {
+                    displayedText = 'Available'; // Display "Available" if no custom remark
+                }
+            } else {
+                // For custom remarks, show a general info icon
+                iconClass = 'fas fa-info-circle';
+                statusClass = 'status-info';
+            }
+
+            // Override status based on Edited Qty if it deviates from original
+            if (currentQty === 0) {
+                iconClass = 'fas fa-times-circle';
+                statusClass = 'status-danger';
+                displayedText = remarkText || 'Not Available';
+            } else if (currentQty < originalOrderQty) {
+                iconClass = 'fas fa-exclamation-circle';
+                statusClass = 'status-warning';
+                displayedText = remarkText || 'Only Available Edit Qty';
+            } else if (currentQty > originalOrderQty) {
+                iconClass = 'fas fa-arrow-alt-circle-up';
+                statusClass = 'status-info';
+                displayedText = remarkText || 'Qty Increased';
+            } else if (currentQty === originalOrderQty && remarkText === '') {
+                iconClass = 'fas fa-check-circle';
+                statusClass = 'status-available';
+                displayedText = 'Available';
+            }
+
+
+            displayElement.innerHTML = `<i class="${iconClass}"></i> ${displayedText}`;
+            displayElement.className = `remark-content ${statusClass}`;
+            displayElement.style.display = 'flex'; // Ensure display element is visible
+
+            // Control visibility of the text input based on the remark type
+            const parentCell = displayElement.parentElement;
+            const remarkInput = parentCell.querySelector('.remark-input');
+            if (remarkInput) {
+                // If it's a custom remark (not one of the predefined ones or empty for "Available")
+                if (!['Not Available', 'Only Available Edit Qty', 'Qty Increased', 'Available', ''].includes(remarkText)) {
+                    remarkInput.style.display = 'block';
+                    displayElement.style.display = 'none';
+                } else {
+                    remarkInput.style.display = 'none';
+                    displayElement.style.display = 'flex';
+                }
+            }
+        }
+
+
+        /**
+         * Updates the table information display (e.g., "Showing 1-20 of 100 products").
+         */
+        function updateTableInfo() {
+            const start = (currentPage - 1) * ITEMS_PER_PAGE + 1;
+            const end = Math.min(start + ITEMS_PER_PAGE - 1, totalItems);
+            tableInfo.textContent = `Showing ${totalItems > 0 ? start : 0}-${end} of ${totalItems} products`;
+        }
+
+        /**
+         * Creates and renders the pagination buttons dynamically.
+         */
+        function createPagination() {
+            const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+            paginationContainer.innerHTML = ''; // Clear existing pagination
+
+            if (totalPages <= 1) {
+                return; // Do not display pagination if there is only one page or no data
+            }
+
+            // Create 'Previous' button
+            const prevBtn = document.createElement('button');
+            prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i> Previous';
+            prevBtn.disabled = currentPage === 1;
+            prevBtn.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    loadOrders(currentPage - 1);
+                }
+            });
+            paginationContainer.appendChild(prevBtn);
+
+            // Render page numbers
+            const maxPagesToShow = 5; // Max number of page buttons to display
+            let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+            let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+
+            if (endPage - startPage + 1 < maxPagesToShow) {
+                startPage = Math.max(1, endPage - maxPagesToShow + 1);
+            }
+
+            if (startPage > 1) {
+                const firstPageBtn = document.createElement('button');
+                firstPageBtn.textContent = '1';
+                firstPageBtn.addEventListener('click', () => loadOrders(1));
+                paginationContainer.appendChild(firstPageBtn);
+                if (startPage > 2) {
+                    const ellipsis = document.createElement('span');
+                    ellipsis.textContent = '...';
+                    ellipsis.classList.add('pagination-ellipsis');
+                    paginationContainer.appendChild(ellipsis);
+                }
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.textContent = i;
+                if (i === currentPage) {
+                    pageBtn.classList.add('active');
+                }
+                pageBtn.addEventListener('click', () => loadOrders(i));
+                paginationContainer.appendChild(pageBtn);
+            }
+
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    const ellipsis = document.createElement('span');
+                    ellipsis.textContent = '...';
+                    ellipsis.classList.add('pagination-ellipsis');
+                    paginationContainer.appendChild(ellipsis);
+                }
+                const lastPageBtn = document.createElement('button');
+                lastPageBtn.textContent = totalPages;
+                lastPageBtn.addEventListener('click', () => loadOrders(totalPages));
+                paginationContainer.appendChild(lastPageBtn);
+            }
+
+            // Create 'Next' button
+            const nextBtn = document.createElement('button');
+            nextBtn.innerHTML = 'Next <i class="fas fa-chevron-right"></i>';
+            nextBtn.disabled = currentPage === totalPages;
+            nextBtn.addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    loadOrders(currentPage + 1);
+                }
+            });
+            paginationContainer.appendChild(nextBtn);
+        }
+
+        /**
+         * Extracts table data from the currently rendered table for export.
+         * Returns an array of arrays, where the first array is headers and subsequent arrays are rows.
+         */
+        function getTableDataForExport() {
+            const table = document.getElementById('dgvMain');
+            const headers = Array.from(table.querySelectorAll('th')).map(th => th.innerText.trim());
+            const rows = Array.from(table.querySelectorAll('tbody tr'));
+
+            const data = [headers]; // Start with headers
+
+            rows.forEach(row => {
+                if (row.querySelector('td') && row.querySelector('td').textContent.includes('No Orders Found')) {
+                    // Skip the "No Orders Found" row
+                    return;
+                }
+                const rowData = [];
+                // S.No
+                rowData.push(row.cells[0].innerText.trim());
+                // Product Code
+                rowData.push(row.cells[1].innerText.trim());
+                // Product Name
+                rowData.push(row.cells[2].innerText.trim());
+                // Order Qty
+                rowData.push(row.cells[3].innerText.trim());
+                // Edited Qty (get value from input)
+                rowData.push(row.cells[4].querySelector('input[type="number"]').value);
+                // Unit
+                rowData.push(row.cells[5].innerText.trim());
+                // MRP
+                rowData.push(row.cells[6].innerText.trim());
+                // Remarks (get value from input, if hidden, get from display div)
+                const remarksInput = row.cells[7].querySelector('input[type="text"].remark-input');
+                const remarksDisplay = row.cells[7].querySelector('.remark-content');
+                if (remarksInput.style.display !== 'none' || remarksInput.value.trim() !== '') {
+                    rowData.push(remarksInput.value.trim());
+                } else {
+                    rowData.push(remarksDisplay.textContent.trim().replace(/^\S+\s/, '')); // Remove icon text
+                }
+                
+                data.push(rowData);
+            });
+            return data;
+        }
+
+        /**
+         * Downloads data as a file.
+         * @param {string} data - The data to download.
+         * @param {string} filename - The name of the file.
+         * @param {string} type - The MIME type of the file.
+         */
+        function downloadFile(data, filename, type) {
+            const blob = new Blob([data], { type: type });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        /**
+         * Exports table data to Excel (.xlsx) format.
+         */
+        function exportToExcel() {
+            const data = getTableDataForExport();
+            if (data.length <= 1) { // Only headers or no data
+                showNotification('Info', 'No data to export to Excel.', 'info');
+                return;
+            }
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Order Details");
+            XLSX.writeFile(wb, "Order_Details.xlsx");
+            showNotification('Success', 'Table exported to Excel successfully!', 'success');
+        }
+
+        /**
+         * Exports table data to PDF format.
+         */
+        function exportToPDF() {
+            const headers = Array.from(document.querySelectorAll('#dgvMain th')).map(th => th.innerText.trim());
+            const rows = getTableDataForExport().slice(1); // Exclude headers from data, as autotable takes them separately
+
+            if (rows.length === 0) {
+                showNotification('Info', 'No data to export to PDF.', 'info');
+                return;
+            }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            doc.autoTable({
+                head: [headers],
+                body: rows,
+                startY: 20,
+                headStyles: { fillColor: [233, 236, 239], textColor: [73, 80, 87], fontStyle: 'bold' },
+                styles: {
+                    fontSize: 8,
+                    cellPadding: 2,
+                    valign: 'middle',
+                    overflow: 'linebreak'
+                },
+                columnStyles: {
+                    // Align numeric columns right
+                    3: { halign: 'right' }, // Order Qty
+                    4: { halign: 'right' }, // Edited Qty
+                    6: { halign: 'right' }, // MRP
+                    // Center align Unit
+                    5: { halign: 'center' }, // Unit
+                },
+                didParseCell: function(data) {
+                    // Fix for remarks cell potentially having icon
+                    if (data.column.index === 7 && data.cell.raw instanceof HTMLElement) {
+                        const remarkDisplay = data.cell.raw.querySelector('.remark-content');
+                        if (remarkDisplay) {
+                            data.cell.text = [remarkDisplay.textContent.trim().replace(/^\S+\s/, '')];
+                        }
+                    }
+                }
+            });
+            doc.save("Order_Details.pdf");
+            showNotification('Success', 'Table exported to PDF successfully!', 'success');
+        }
+
+        /**
+         * Exports table data to CSV format.
+         */
+        function exportToCSV() {
+            const data = getTableDataForExport();
+            if (data.length <= 1) {
+                showNotification('Info', 'No data to export to CSV.', 'info');
+                return;
+            }
+            const csvContent = data.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
+            downloadFile(csvContent, "Order_Details.csv", "text/csv;charset=utf-8;");
+            showNotification('Success', 'Table exported to CSV successfully!', 'success');
+        }
+
+        /**
+         * Exports table data to TXT format.
+         */
+        function exportToTXT() {
+            const data = getTableDataForExport();
+            if (data.length <= 1) {
+                showNotification('Info', 'No data to export to TXT.', 'info');
+                return;
+            }
+            const txtContent = data.map(row => row.join('\t')).join('\n'); // Tab-separated
+            downloadFile(txtContent, "Order_Details.txt", "text/plain;charset=utf-8;");
+            showNotification('Success', 'Table exported to TXT successfully!', 'success');
+        }
+
+
+        // Event listener for the 'Submit' button
+        btnSubmit.addEventListener('click', async () => {
+            showLoading();
+            const updatedData = [];
+            const rows = orderTableBody.querySelectorAll('tr');
+
+            if (rows.length === 0 || (rows[0].querySelector('td') && rows[0].querySelector('td').textContent.includes('No Orders Found'))) {
+                showNotification('Info', 'No orders to submit. Table is empty.', 'info');
+                hideLoading();
+                return;
+            }
+
+            rows.forEach((row) => {
+                const editQtyInput = row.querySelector('input[type="number"]');
+                const remarksInput = row.querySelector('input[type="text"].remark-input');
+
+                const originalOrderQty = parseInt(row.dataset.originalorderqty, 10);
+                const currentEditedQty = parseInt(editQtyInput.value, 10);
+                const originalRemarks = remarksInput.dataset.originalvalue || '';
+                const currentRemarks = remarksInput.value;
+
+                // Only include rows where Edited Qty or Remarks have changed
+                if (currentEditedQty !== originalOrderQty || currentRemarks !== originalRemarks) {
+                    updatedData.push({
+                        ProductCode: row.dataset.productcode,
+                        ProductName: row.dataset.productname,
+                        OrderQty: currentEditedQty, // This is the edited quantity
+                        OriginalOrderQty: originalOrderQty, // Pass original quantity
+                        SaleUnit: row.dataset.saleunit,
+                        remarks: currentRemarks,
+                        OrderId: row.dataset.orderid,
+                        StoreName: row.dataset.storename, // Use the store name from dataset
+                        // No need to pass WantedType, StoreCode, LastReceivedDate, LastSaleDate, ProductTypeName to backend as they are not updated
+                    });
+                }
+            });
+
+            if (updatedData.length > 0) {
+                try {
+                    const response = await fetch('/update_orders', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ updatedData: updatedData })
+                    });
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
+                    }
+                    const data = await response.json();
+                    if (data.success) {
+                        showNotification('Success', data.message, 'success');
+                        // Reload orders to reflect changes and reset inputs
+                        loadOrders(currentPage);
+                    } else {
+                        showNotification('Error', data.message || 'Failed to update order quantities', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error updating orders:', error);
+                    showNotification('Error', `Failed to update order quantities: ${error.message}`, 'error');
+                } finally {
+                    hideLoading();
+                }
+            } else {
+                showNotification('Info', 'No changes to submit', 'info');
+                hideLoading();
+            }
+        });
+
+        // Event listener for the 'Reset' button
+        btnReset.addEventListener('click', () => {
+            if (allData.length === 0) {
+                showNotification('Info', 'No orders to reset.', 'info');
+                return;
+            }
+            loadOrders(currentPage); // Reload orders to revert to original values
+            showNotification('Info', 'Table has been reset to original values', 'info');
+        });
+
+        // Add event listeners for export buttons
+        btnExportExcel.addEventListener('click', exportToExcel);
+        btnExportPDF.addEventListener('click', exportToPDF);
+        btnExportCSV.addEventListener('click', exportToCSV);
+        btnExportTXT.addEventListener('click', exportToTXT);
+
+
+        // Initialize the application when the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            loadOrders(); // Load the first page of orders on dashboard load
+        });
+        {% endraw %}
+    </script>
+</body>
+</html>

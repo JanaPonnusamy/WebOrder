@@ -12,5 +12,12 @@
     "suppliercode": "PALEPU",
     "suppliername": "PALEPU PHARMA DISTRIBUTORS PVT LTD",
     "GSTNumber": "Test"
+  },
+  {
+    "username": "691",
+    "password": "pass",
+    "suppliercode": "691",
+    "suppliername": "THANTHAI PHARMA DISTRIBUTOR",
+    "GSTNumber": "Test"
   }
 ]

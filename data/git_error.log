@@ -1,0 +1,21 @@
+fatal: pathspec '.' did not match any files
+
+warning: in the working copy of '117.json', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of '72.json', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'PALEPU.json', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'git-error.log', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'git_error.log', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'send_wa.py', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'storeheader.json', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'users.json', CRLF will be replaced by LF the next time Git touches it
+
+error: src refspec main does not match any
+error: failed to push some refs to 'https://github.com/JanaPonnusamy/WebOrder.git'
+
+warning: in the working copy of '117.json', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'git_error.log', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'users.json', CRLF will be replaced by LF the next time Git touches it
+
+error: src refspec main does not match any
+error: failed to push some refs to 'https://github.com/JanaPonnusamy/WebOrder.git'
+

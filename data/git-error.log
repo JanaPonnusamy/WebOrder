@@ -1,0 +1,31 @@
+warning: in the working copy of 'data/117.json', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'data/users.json', CRLF will be replaced by LF the next time Git touches it
+warning: in the working copy of 'data/send_wa.py', CRLF will be replaced by LF the next time Git touches it
+
+remote: error: GH013: Repository rule violations found for refs/heads/main.        
+remote: 
+remote: - GITHUB PUSH PROTECTION        
+remote:   â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”        
+remote:     Resolve the following violations before pushing again        
+remote: 
+remote:     - Push cannot contain secrets        
+remote: 
+remote:             
+remote:      (?) Learn how to resolve a blocked push        
+remote:      https://docs.github.com/code-security/secret-scanning/working-with-secret-scanning-and-push-protection/working-with-push-protection-from-the-command-line#resolving-a-blocked-push        
+remote:             
+remote:             
+remote:       â€”â€” Twilio Account String Identifier â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”â€”        
+remote:        locations:        
+remote:          - commit: 3cfeb6c1e7450319c617c7aec3f083b111bcbe98        
+remote:            path: data/send_wa.py:4        
+remote:             
+remote:        (?) To push, remove secret from commit(s) or follow this URL to allow the secret.        
+remote:        https://github.com/JanaPonnusamy/WebOrder/security/secret-scanning/unblock-secret/2zBAsNXmSnaHC7js8O5yjcio09a        
+remote:             
+remote: 
+remote: 
+To https://github.com/JanaPonnusamy/WebOrder
+ ! [remote rejected] main -> main (push declined due to repository rule violations)
+error: failed to push some refs to 'https://github.com/JanaPonnusamy/WebOrder'
+

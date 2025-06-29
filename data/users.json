@@ -26,5 +26,12 @@
     "suppliercode": "1391",
     "suppliername": "THANTHAI PHARMA DISTRIBUTOR",
     "GSTNumber": "Test"
+  },
+  {
+    "username": "362",
+    "password": "pass",
+    "suppliercode": "362",
+    "suppliername": "SRI SENTHIL MEDICAL AGENCIES",
+    "GSTNumber": "Test"
   }
 ]

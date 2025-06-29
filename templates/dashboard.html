@@ -587,6 +587,8 @@
         </div>
     </div>
     <div id="notification" class="notification"></div>
+    <!-- Hidden element to pass supplier_code to JavaScript -->
+    <div id="supplier-code-data" data-supplier-code="{{ supplier_code }}" style="display:none;"></div>
     <script>
         // Raw JavaScript content to prevent Jinja2 parsing errors within the script
         {% raw %}
@@ -601,7 +603,7 @@
         const btnExportPDF = document.getElementById('btnExportPDF');
         const btnExportCSV = document.getElementById('btnExportCSV');
         const btnExportTXT = document.getElementById('btnExportTXT');
-        const btnExportJSON = document.getElementById('btnExportJSON'); // Get new JSON export button
+        const btnExportJSON = document.getElementById('btnExportJSON'); 
 
         // New elements for store selection and dynamic details
         const storeSelect = document.getElementById('storeSelect');
@@ -609,13 +611,14 @@
         const storeDetailsDisplay = document.getElementById('storeDetailsDisplay');
 
         let allData = []; // Stores all fetched data for the current supplier and store
-        let originalOrderData = {}; // Stores original order quantities and remarks for reset
+        let originalOrderData = {}; // Stores original order quantities and remarks for reset and change tracking
         let currentPage = 1;
         const ITEMS_PER_PAGE = 20; // Number of items to display per page
         let totalItems = 0; // Total number of items fetched from the backend
         let allStores = []; // To store all available stores from backend
-        // Access supplier_code passed from Flask
-        const supplierCode = "{{ supplier_code }}"; // From Flask session, wrapped in Jinja2 raw block
+        // Access supplier_code passed from Flask using a data attribute
+        const supplierCode = document.getElementById('supplier-code-data').dataset.supplierCode;
+
 
         /**
          * Displays a notification message.
@@ -710,7 +713,7 @@
                 }
                 const lastPageButton = document.createElement('button');
                 lastPageButton.textContent = totalPages;
-                lastPageButton.addEventListener('click', () => { currentPage = totalPages; loadOrders(currentPage); });
+                lastPageButton.addEventListener('click', () => { currentPage = totalPages; loadOrders(totalPages); });
                 paginationContainer.appendChild(lastPageButton);
             }
 
@@ -736,13 +739,13 @@
             const input = event.target;
             const row = input.closest('tr');
             const remarksInput = row.querySelector('.remark-input');
-            const remarksDisplay = row.querySelector('.remark-content'); // Get the display div
+            const remarksDisplay = row.querySelector('.remark-content'); 
 
             const newQty = parseInt(input.value, 10);
-            const originalOrderQty = parseInt(row.dataset.originalorderqty, 10); // Get original qty from dataset
+            const originalOrderQty = parseInt(row.dataset.originalorderqty, 10); 
 
             // Update the displayed 'Order Qty' column
-            row.children[3].textContent = newQty; // Assuming 4th column is 'Order Qty'
+            row.children[3].textContent = newQty; 
 
             // Call updateRemarkDisplay with current values
             updateRemarkDisplay(remarksDisplay, remarksInput.value, newQty, originalOrderQty);
@@ -762,7 +765,8 @@
             const selectedStoreName = storeSelect.value; // Get selected store from dropdown
 
             try {
-                const response = await fetch(`/get_orders?page=${currentPage}&per_page=${ITEMS_PER_PAGE}&storename=${encodeURIComponent(selectedStoreName)}`);
+                // Pass both storename and suppliercode to the backend
+                const response = await fetch(`/get_orders?page=${currentPage}&per_page=${ITEMS_PER_PAGE}&storename=${encodeURIComponent(selectedStoreName)}&suppliercode=${encodeURIComponent(supplierCode)}`);
                 const result = await response.json();
 
                 if (result.data) {
@@ -798,14 +802,14 @@
                     allData.forEach(item => {
                         const row = document.createElement('tr');
                         row.dataset.productCode = item.ProductCode;
-                        row.dataset.orderId = item.OrderId; // Store OrderId for update
-                        row.dataset.storeName = item.StoreName; // Store StoreName for update
-                        row.dataset.originalorderqty = item.OrderQty; // Store original quantity
+                        row.dataset.orderId = item.OrderId; 
+                        row.dataset.storeName = item.StoreName; 
+                        row.dataset.originalorderqty = item.OrderQty; 
 
                         // Store original quantity and remarks for reset and change tracking
                         originalOrderData[`${item.ProductCode}-${item.OrderId}-${item.StoreName}`] = {
                             OrderQty: parseInt(item.OrderQty, 10), // Ensure integer
-                            Remarks: item.Remarks || ''
+                            Remarks: item.remarks || '' // Use item.remarks here
                         };
 
                         // Create the remarks input field (hidden by default)
@@ -813,8 +817,8 @@
                         remarksInput.type = 'text';
                         remarksInput.classList.add('remark-input');
                         remarksInput.placeholder = 'Add custom remarks';
-                        remarksInput.value = item.Remarks || ''; // Set initial value from data
-                        remarksInput.dataset.originalvalue = item.Remarks || ''; // Store original remarks for comparison
+                        remarksInput.value = item.remarks || ''; // Set initial value from data
+                        remarksInput.dataset.originalvalue = item.remarks || ''; // Store original remarks for comparison
 
                         // Create the remarks display div
                         const remarksDisplay = document.createElement('div');
@@ -857,7 +861,7 @@
                         orderTableBody.appendChild(row);
 
                         // Call updateRemarkDisplay initially for each row to set correct icon/text/visibility
-                        updateRemarkDisplay(remarksDisplay, item.Remarks || '', parseInt(item.OrderQty, 10), parseInt(item.OrderQty, 10));
+                        updateRemarkDisplay(remarksDisplay, item.remarks || '', parseInt(item.OrderQty, 10), parseInt(item.OrderQty, 10));
                     });
 
                     // Attach event listeners to newly created input fields
@@ -938,7 +942,7 @@
         /**
          * Updates the remark cell content and icon based on remark text and quantity changes.
          * @param {HTMLElement} displayElement - The div element where the remark content will be displayed.
-         * @param {string} remarkText - The current text in the remarks input.
+         * @param {string} remarkText - The current text in the remarks input (or original remark if input is hidden).
          * @param {number} currentQty - The current value in the Edited Qty input.
          * @param {number} originalOrderQty - The original OrderQty for the product.
          */
@@ -953,9 +957,10 @@
 
             // Define known remarks that should trigger specific icons/behavior
             const autoRemarks = ['No Stock', 'Only Available Edit Qty', 'Qty Increased', 'Available'];
-            const originalRemarkIsAuto = autoRemarks.includes(remarkText);
+            const remarksInput = displayElement.parentElement.querySelector('.remark-input');
+            const currentRemarksInputValue = remarksInput ? remarksInput.value.trim() : '';
 
-            // Logic to determine remark based on quantity changes
+            // Default behavior based on quantity changes
             if (currentQty === 0) {
                 iconClass = 'fas fa-times-circle';
                 statusClass = 'status-danger';
@@ -973,24 +978,21 @@
                 statusClass = 'status-available';
                 displayedText = 'Available';
             }
-
-            // If the original remark was a custom one (not an auto-generated one or empty/Available), prioritize it
-            // Only if the current edited quantity does not force an auto-remark
-            if (originalRemarkIsAuto === false && remarkText.trim() !== '' && currentQty !== 0 && currentQty >= originalOrderQty) {
-                 displayedText = remarkText; // Keep the original custom remark
-                 iconClass = 'fas fa-info-circle'; // General info icon for custom remarks
-                 statusClass = 'status-info';
-            }
             
-            // If there's a custom remark *currently entered* in the hidden input, and it's not an auto-generated one,
-            // then display that custom remark regardless of quantity (unless quantity is 0, which overrides)
-            const remarksInput = displayElement.parentElement.querySelector('.remark-input');
-            if (remarksInput && remarksInput.value.trim() !== '' && !autoRemarks.includes(remarksInput.value.trim())) {
-                if (currentQty !== 0) { // If qty is not zero, show custom remark
-                    displayedText = remarksInput.value.trim();
-                    iconClass = 'fas fa-info-circle';
+            // Override with custom remark if present in the input field and not an auto-generated one
+            // Custom remarks take precedence, unless quantity forces a "No Stock" message
+            if (currentRemarksInputValue !== '' && !autoRemarks.includes(currentRemarksInputValue)) {
+                if (currentQty !== 0) { // Custom remarks persist unless quantity is explicitly 0
+                    displayedText = currentRemarksInputValue;
+                    iconClass = 'fas fa-info-circle'; // General info icon for custom remarks
                     statusClass = 'status-info';
                 }
+            } else if (currentRemarksInputValue === '' && displayedText === 'Available') {
+                // If input is empty and auto-display is 'Available', ensure it's truly 'Available' and not an old custom remark
+                // This handles cases where user deletes a custom remark, reverting to auto-generated 'Available'
+                iconClass = 'fas fa-check-circle';
+                statusClass = 'status-available';
+                displayedText = 'Available';
             }
 
 
@@ -1000,11 +1002,11 @@
             // Control visibility of the text input
             if (remarksInput) {
                 // If the currently displayed text is an auto-generated remark, hide the input and show the display div
-                if (['No Stock', 'Only Available Edit Qty', 'Qty Increased', 'Available'].includes(displayedText) && remarksInput.value.trim() === '') {
+                if (autoRemarks.includes(displayedText) && remarksInput.value.trim() === '') {
                     remarksInput.style.display = 'none';
                     displayElement.style.display = 'flex';
                 } else if (remarksInput.value.trim() !== '') {
-                    // If there's a custom remark in the input, hide display and show input
+                    // If there's a custom remark in the input, show input and hide display
                     remarksInput.style.display = 'block';
                     displayElement.style.display = 'none';
                 } else {
@@ -1046,6 +1048,10 @@
                 } else { // If input is hidden, use the auto-generated text from the display div
                     newRemarks = remarksDisplay.textContent.trim().replace(/^\S+\s/, ''); // Remove icon text
                     if (newRemarks === 'Available') newRemarks = ''; // If it auto-set to 'Available', store as empty
+                    // Do not save auto-generated remarks if they match the conditions that create them
+                    if (newRemarks === 'No Stock' && newOrderQty === 0) newRemarks = ''; 
+                    if (newRemarks === 'Only Available Edit Qty' && newOrderQty < parseInt(row.dataset.originalorderqty, 10)) newRemarks = '';
+                    if (newRemarks === 'Qty Increased' && newOrderQty > parseInt(row.dataset.originalorderqty, 10)) newRemarks = '';
                 }
 
 
@@ -1059,7 +1065,8 @@
                         OrderId: orderId,
                         StoreName: storeName,
                         OrderQty: newOrderQty,
-                        remarks: newRemarks
+                        remarks: newRemarks,
+                        ProductName: row.children[2].textContent // Include ProductName for WhatsApp message
                     });
                 }
             });
@@ -1126,7 +1133,7 @@
                 'Order Qty': item.OrderQty,
                 'Unit': item.UnitDescription,
                 'MRP': parseFloat(item.MRP || 0).toFixed(2),
-                'Remarks': item.Remarks
+                'Remarks': item.remarks // Use item.remarks here
             })));
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Orders");
@@ -1154,7 +1161,7 @@
                 item.OrderQty,
                 item.UnitDescription || '',
                 parseFloat(item.MRP || 0).toFixed(2),
-                item.Remarks || ''
+                item.remarks || '' // Use item.remarks here
             ]);
 
             doc.autoTable({
@@ -1196,7 +1203,7 @@
                     item.OrderQty,
                     `"${item.UnitDescription || ''}"`,
                     parseFloat(item.MRP || 0).toFixed(2),
-                    `"${(item.Remarks || '').replace(/"/g, '""')}"`
+                    `"${(item.remarks || '').replace(/"/g, '""')}"` // Use item.remarks here
                 ];
                 csvContent += row.join(",") + "\n";
             });
@@ -1229,7 +1236,7 @@
                 txtContent += `Order Qty: ${item.OrderQty}\n`;
                 txtContent += `Unit: ${item.UnitDescription || ''}\n`;
                 txtContent += `MRP: ${parseFloat(item.MRP || 0).toFixed(2)}\n`;
-                txtContent += `Remarks: ${item.Remarks || ''}\n`;
+                txtContent += `Remarks: ${item.remarks || ''}\n`; // Use item.remarks here
                 txtContent += `--------------------\n`;
             });
 
@@ -1258,7 +1265,6 @@
 
             const storeName = storeSelect.value;
             // The supplierCode is now available from the Jinja2 context
-            const supplierCode = "{{ supplier_code }}"; // Retrieve from Flask context
             const fileName = `${storeName}_${supplierCode}.json`; 
             
             const jsonContent = JSON.stringify(allData, null, 2); // Pretty print JSON
@@ -1294,7 +1300,13 @@
                 console.error('Error fetching store headers:', error);
                 showNotification('Error', `Failed to fetch store list: ${error.message}`, 'error');
             }
-            // loadOrders() is called after dropdown population in populateStoreDropdown()
+
+            // ADD THIS LINE: Event listener for store selection change
+            storeSelect.addEventListener('change', () => {
+                currentPage = 1; // Reset to first page when store changes
+                loadOrders(currentPage);
+            });
+            // loadOrders() is called initially within populateStoreDropdown()
         });
         {% endraw %}
     </script>

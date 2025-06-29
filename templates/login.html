@@ -33,17 +33,17 @@
             left: -50%;
             background: radial-gradient(circle, rgba(255,255,255,0.1) 10%, transparent 10.5%), 
                         radial-gradient(circle, rgba(255,255,255,0.1) 10%, transparent 10.5%);
-            background-size: 50px 50px;
-            animation: move-pattern 15s linear infinite;
+            background-size: 50px 50px, 100px 100px;
+            animation: move-background 60s linear infinite;
         }
         
-        @keyframes move-pattern {
-            0% { background-position: 0 0; }
-            100% { background-position: 50px 50px; }
+        @keyframes move-background {
+            from { transform: translate(0, 0); }
+            to { transform: translate(50px, 50px); }
         }
 
         .login-container {
-            background-color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.95);
             padding: 40px;
             border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
@@ -51,27 +51,35 @@
             width: 100%;
             max-width: 400px;
             position: relative;
-            z-index: 1;
+            z-index: 10;
             transform: translateY(0);
-            transition: transform 0.5s ease-out;
+            transition: transform 0.3s ease-in-out;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px); /* Frosted glass effect */
         }
-
-        .login-container.shake {
-            animation: shake 0.5s;
-            animation-iteration-count: 1;
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
-            20%, 40%, 60%, 80% { transform: translateX(10px); }
+        
+        .login-container:hover {
+            transform: translateY(-5px);
         }
 
         .login-container h2 {
-            margin-bottom: 25px;
+            margin-bottom: 30px;
             color: #333;
             font-size: 28px;
-            font-weight: 700;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .login-container h2::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background-color: #4CAF50; /* A fresh green for the underline */
+            border-radius: 2px;
         }
 
         .input-group {
@@ -90,66 +98,88 @@
 
         .input-group input {
             width: 100%;
-            padding: 12px 15px 12px 45px; /* Adjust padding for icon */
-            border: 1px solid #ccc;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
             border-radius: 8px;
             font-size: 16px;
             transition: all 0.3s ease;
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
         }
 
         .input-group input:focus {
-            border-color: #007bff;
-            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+            border-color: #4CAF50; /* Green focus border */
             outline: none;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2); /* Soft green glow */
         }
-
-        .input-group .icon {
+        
+        .input-group i {
             position: absolute;
-            left: 15px;
+            right: 15px;
             top: 50%;
             transform: translateY(-50%);
-            color: #888;
+            color: #aaa;
             font-size: 18px;
-            transition: transform 0.3s ease;
+            transition: color 0.3s ease;
+        }
+        
+        .input-group input:focus + i {
+            color: #4CAF50; /* Green icon on focus */
         }
 
-        .input-group input:focus + .icon {
-            color: #007bff;
-            transform: translateY(-50%) scale(1.1); /* Subtle grow effect on focus */
-        }
-
-        .btn-login {
+        .login-btn {
             width: 100%;
-            padding: 15px;
-            background-color: #007bff;
+            padding: 14px;
+            background: linear-gradient(90deg, #4CAF50, #8bc34a); /* Green gradient */
             color: white;
             border: none;
             border-radius: 8px;
             font-size: 18px;
-            font-weight: 700;
+            font-weight: bold;
             cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
         }
 
-        .btn-login:hover {
-            background-color: #0056b3;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 123, 255, 0.4);
+        .login-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all 0.4s ease;
+            transform: skewX(-20deg);
         }
 
+        .login-btn:hover::before {
+            left: 100%;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(90deg, #8bc34a, #4CAF50);
+        }
+        
         .error {
             color: #e74c3c;
-            margin-top: -10px;
-            margin-bottom: 15px;
-            font-size: 14px;
-            height: 20px; /* Reserve space */
+            background-color: #fce4e4;
+            border: 1px solid #e74c3c;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.5s ease-in-out;
+            font-size: 14px;
         }
         
         .error.show {
+            display: block;
             opacity: 1;
         }
     </style>
@@ -157,61 +187,43 @@
 <body>
     <div class="login-container">
         <h2>Login</h2>
-        <form id="loginForm" action="/" method="POST">
-            {% if error %}
+        {% if error %}
             <div class="error show">{{ error }}</div>
-            {% else %}
-            <div class="error"></div>
-            {% endif %}
+        {% endif %}
+        <!-- ACTION IS THE KEY FIX HERE -->
+        <form id="loginForm" method="post" action="/login"> 
             <div class="input-group">
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" placeholder="Enter your username" required>
-                <i class="fas fa-user icon"></i>
+                <i class="fas fa-user"></i>
             </div>
             <div class="input-group">
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" placeholder="Enter your password" required>
-                <i class="fas fa-lock icon"></i>
+                <i class="fas fa-lock"></i>
             </div>
-            <button type="submit" class="btn-login">Login</button>
+            <button type="submit" class="login-btn">Login</button>
         </form>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const loginForm = document.getElementById('loginForm');
-            const usernameInput = document.getElementById('username');
-            const passwordInput = document.getElementById('password');
-            const usernameIcon = usernameInput.nextElementSibling;
-            const passwordIcon = passwordInput.nextElementSibling;
-            const loginContainer = document.querySelector('.login-container');
-
-            usernameInput.addEventListener('focus', function() {
-                this.parentNode.querySelector('.icon').style.transform = 'translateY(-50%) rotate(10deg)';
-            });
-            usernameInput.addEventListener('blur', function() {
-                this.parentNode.querySelector('.icon').style.transform = 'translateY(-50%)';
-            });
-
-            passwordInput.addEventListener('focus', function() {
-                this.parentNode.querySelector('.icon').style.transform = 'translateY(-50%) rotate(10deg)';
-            });
-            passwordInput.addEventListener('blur', function() {
-                this.parentNode.querySelector('.icon').style.transform = 'translateY(-50%)';
+            const loginBtn = document.querySelector('.login-btn');
+            
+            // Icon animation on hover
+            loginBtn.addEventListener('mouseenter', function() {
+                const icon = this.querySelector('i');
+                if (icon) {
+                    icon.style.transform = 'translateY(-50%) rotate(360deg)';
+                }
             });
             
-            // Add a subtle animation to the icons on hover
-            usernameIcon.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-50%) rotate(360deg)';
-                setTimeout(() => {
-                    this.style.transform = 'translateY(-50%)';
-                }, 500);
-            });
-            passwordIcon.addEventListener('mouseenter', function() {
-                this.style.transform = 'translateY(-50%) rotate(360deg)';
-                setTimeout(() => {
-                    this.style.transform = 'translateY(-50%)';
-                }, 500);
+            loginBtn.addEventListener('mouseleave', function() {
+                const icon = this.querySelector('i');
+                if (icon) {
+                    icon.style.transform = 'translateY(-50%)';
+                }
             });
             
             loginForm.addEventListener('submit', function(e) {
@@ -229,15 +241,6 @@
                     showError('Please enter your password');
                     e.preventDefault();
                     return;
-                }
-
-                // If login fails (due to error from Flask), shake the form
-                const errorDiv = document.querySelector('.error');
-                if (errorDiv && errorDiv.textContent.includes('Invalid credentials')) {
-                    loginContainer.classList.add('shake');
-                    loginContainer.addEventListener('animationend', () => {
-                        loginContainer.classList.remove('shake');
-                    }, { once: true });
                 }
             });
             

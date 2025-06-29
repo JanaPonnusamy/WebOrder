@@ -42,6 +42,7 @@ else:
 
 # Utility: Load users from users.json (for authentication purposes)
 def load_users():
+    """Loads user data from the users.json file."""
     if not os.path.exists(USERS_FILE) or os.path.getsize(USERS_FILE) == 0:
         print(f"WARNING: {USERS_FILE} not found or is empty. Please ensure it exists with user data.")
         return []
@@ -49,304 +50,295 @@ def load_users():
         with open(USERS_FILE, 'r', encoding='utf-8-sig') as f:
             return json.load(f)
     except json.JSONDecodeError as e:
-        print(f"Error decoding {USERS_FILE}: {e}")
+        print(f"Error decoding users.json: {e}")
         return []
     except Exception as e:
-        print(f"Error reading {USERS_FILE}: {e}")
-        return []
-
-# Utility: Load OrderSuppliers.json (for enriching session data with supplier details)
-def load_order_suppliers():
-    if not os.path.exists(ORDER_SUPPLIERS_FILE) or os.path.getsize(ORDER_SUPPLIERS_FILE) == 0:
-        print(f"WARNING: {ORDER_SUPPLIERS_FILE} not found or is empty. This file is crucial for supplier details.")
-        return []
-    try:
-        with open(ORDER_SUPPLIERS_FILE, 'r', encoding='utf-8-sig') as f:
-            return json.load(f)
-    except json.JSONDecodeError as e:
-        print(f"Error decoding {ORDER_SUPPLIERS_FILE}: {e}")
-        return []
-    except Exception as e:
-        print(f"Error reading {ORDER_SUPPLIERS_FILE}: {e}")
+        print(f"Error reading users.json: {e}")
         return []
 
 # Utility: Load store headers from storeheader.json
 def load_store_headers():
+    """Loads store header data from the storeheader.json file."""
     if not os.path.exists(STORE_HEADERS_FILE) or os.path.getsize(STORE_HEADERS_FILE) == 0:
-        print(f"WARNING: {STORE_HEADERS_FILE} not found or is empty. Store dropdown might be empty.")
+        print(f"WARNING: {STORE_HEADERS_FILE} not found or is empty. Please ensure it exists with store data.")
         return []
     try:
         with open(STORE_HEADERS_FILE, 'r', encoding='utf-8-sig') as f:
             return json.load(f)
     except json.JSONDecodeError as e:
-        print(f"Error decoding {STORE_HEADERS_FILE}: {e}")
+        print(f"Error decoding storeheader.json: {e}")
         return []
     except Exception as e:
-        print(f"Error reading {STORE_HEADERS_FILE}: {e}")
+        print(f"Error reading storeheader.json: {e}")
         return []
 
-# Utility: Check credentials in Users data and enrich with OrderSuppliers data
-def check_login(username, password):
-    users = load_users()
-    order_suppliers = load_order_suppliers()
+# Utility: Load order suppliers from OrderSuppliers.json
+def load_order_suppliers():
+    """Loads order supplier data from the OrderSuppliers.json file."""
+    if not os.path.exists(ORDER_SUPPLIERS_FILE) or os.path.getsize(ORDER_SUPPLIERS_FILE) == 0:
+        print(f"WARNING: {ORDER_SUPPLIERS_FILE} not found or is empty. Please ensure it exists with supplier data.")
+        return []
+    try:
+        with open(ORDER_SUPPLIERS_FILE, 'r', encoding='utf-8-sig') as f:
+            return json.load(f)
+    except json.JSONDecodeError as e:
+        print(f"Error decoding OrderSuppliers.json: {e}")
+        return []
+    except Exception as e:
+        print(f"Error reading OrderSuppliers.json: {e}")
+        return []
 
-    authenticated_user = None
-    for user in users:
-        # Authenticate using username and password from users.json
-        if user.get('username') == username and user.get('password') == password:
-            authenticated_user = user
-            break
+# Utility: Load specific supplier data
+def load_supplier_data(supplier_code, store_name=None):
+    """
+    Loads data for a specific supplier, optionally filtered by store name.
+    If store_name is provided and not 'All Stores', it tries to load
+    {store_name}_{supplier_code}.json.
+    Otherwise, it loads {supplier_code}.json.
+    """
+    if store_name and store_name != 'All Stores':
+        file_name = f"{store_name}_{supplier_code}.json"
+    else:
+        file_name = f"{supplier_code}.json"
     
-    if authenticated_user:
-        # Find the matching supplier in OrderSuppliers.json based on suppliercode
-        supplier_code_from_user = authenticated_user.get('suppliercode')
-        supplier_details = next((s for s in order_suppliers if s.get('suppliercode') == supplier_code_from_user), None)
-        
-        if supplier_details:
-            # Combine details for the session
-            # Prioritize WhatsAppNumber if available, otherwise MobileNumber
-            whatsapp_num = supplier_details.get('WhatsAppNumber')
-            if whatsapp_num is None or whatsapp_num == '': # Check for None or empty string
-                whatsapp_num = supplier_details.get('MobileNumber')
-            
-            # Ensure proper formatting for Twilio (starts with 'whatsapp:+') if it's a raw number
-            # This is a basic attempt, for production you'd need more robust validation
-            if whatsapp_num and not whatsapp_num.startswith('whatsapp:'):
-                # Basic cleanup: remove non-digits and add country code if missing (assuming +91 for India)
-                clean_num = ''.join(filter(str.isdigit, whatsapp_num))
-                if len(clean_num) == 10 and not clean_num.startswith('91'): # Assumes 10 digit Indian number
-                    whatsapp_num = f'+91{clean_num}'
-                elif len(clean_num) > 10 and clean_num.startswith('91'):
-                     whatsapp_num = f'+{clean_num}'
-                else:
-                    whatsapp_num = f'+{clean_num}' # Fallback for other formats, Twilio will validate
+    file_path = os.path.join(DATA_DIR, file_name)
+    print(f"Attempting to load data from: {file_path}") # Debugging line
 
-                if not whatsapp_num.startswith('whatsapp:'): # Add whatsapp: prefix if not present
-                    whatsapp_num = f'whatsapp:{whatsapp_num}'
-            
-            user_session_data = {
-                'username': authenticated_user.get('username'),
-                'suppliercode': supplier_code_from_user,
-                'suppliername': supplier_details.get('Suppliername', 'N/A'),
-                'GSTNumber': supplier_details.get('GSTNumber', 'N/A'), # Use GSTNumber from OrderSuppliers if present
-                'MobileNumber': supplier_details.get('MobileNumber', ''),
-                'WhatsAppNumber': whatsapp_num # Store the formatted WhatsApp number
-            }
-            return user_session_data
-    return None
-
-# Function to send WhatsApp message via Twilio
-def send_whatsapp_message(to_number, message_body):
-    if not twilio_client or not TWILIO_WHATSAPP_NUMBER:
-        print("Twilio client not initialized or sender number missing. Cannot send WhatsApp message.")
-        return False
+    if not os.path.exists(file_path):
+        print(f"File not found: {file_path}")
+        return [], f"No records found for the selected store ({store_name}) and supplier.", file_name
+    
+    if os.path.getsize(file_path) == 0:
+        print(f"File is empty: {file_path}")
+        return [], f"The file for the selected store ({file_name}) is empty.", file_name
 
     try:
-        # Twilio requires the 'from_' number to be in 'whatsapp:+1234567890' format
-        message = twilio_client.messages.create(
-            from_=TWILIO_WHATSAPP_NUMBER,
-            body=message_body,
-            to=f'{to_number}' # Recipient number should already be in 'whatsapp:+1234567890' format from session
-        )
-        print(f"WhatsApp message sent to {to_number}. SID: {message.sid}")
-        return True
+        with open(file_path, 'r', encoding='utf-8-sig') as f:
+            data = json.load(f)
+            print(f"Successfully loaded {len(data)} records from {file_path}") # Debugging line
+            return data, "Data loaded successfully.", file_name
+    except json.JSONDecodeError as e:
+        print(f"Error decoding JSON from {file_path}: {e}")
+        return [], f"Error: Invalid JSON format in {file_name}.", file_name
     except Exception as e:
-        print(f"Error sending WhatsApp message to {to_number}: {e}")
-        return False
+        print(f"Error reading {file_path}: {e}")
+        return [], f"Server error reading {file_name}: {str(e)}", file_name
 
-@app.before_request
-def require_login():
-    allowed_endpoints = ['login', 'static', 'get_orders', 'update_orders', 'get_store_headers']
-    if 'user' not in session and request.endpoint not in allowed_endpoints and not request.path.startswith('/logout'):
-        return redirect(url_for('login'))
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
+def index():
+    """Redirects to the login page."""
+    return redirect(url_for('login'))
+
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    error = ''
+    """Handles user login."""
     if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
-        user_data = check_login(username, password) # Get the full user object with enriched data
-        if user_data:
-            session['user'] = user_data.get('username')
-            session['suppliercode'] = user_data.get('suppliercode')
-            session['suppliername'] = user_data.get('suppliername') # Store suppliername
-            session['GSTNumber'] = user_data.get('GSTNumber')     # Store GSTNumber
-            session['whatsapp_number'] = user_data.get('WhatsAppNumber') # Store WhatsApp number (already formatted)
+        username = request.form['username']
+        password = request.form['password']
+        users = load_users()
+        order_suppliers = load_order_suppliers()
+        
+        user = next((u for u in users if u['username'] == username and u['password'] == password), None)
+
+        if user:
+            session['logged_in'] = True
+            session['username'] = user['username']
+            session['supplier_code'] = str(user.get('suppliercode', ''))
+            
+            # Enrich user session with supplier details from OrderSuppliers.json
+            supplier_details = next((s for s in order_suppliers if s.get('suppliercode') == session['supplier_code']), None)
+            if supplier_details:
+                session['supplier_name'] = supplier_details.get('Suppliername', 'Unknown Supplier')
+                session['gst_number'] = supplier_details.get('GSTNumber', 'N/A')
+                
+                whatsapp_num = supplier_details.get('WhatsAppNumber')
+                if whatsapp_num is None or whatsapp_num == '': # Check for None or empty string
+                    whatsapp_num = supplier_details.get('MobileNumber')
+                
+                # Basic formatting for Twilio: ensure it starts with 'whatsapp:+'
+                if whatsapp_num:
+                    clean_num = ''.join(filter(str.isdigit, whatsapp_num))
+                    if not clean_num.startswith('91') and len(clean_num) == 10: # Assuming India for 10-digit numbers
+                        whatsapp_num = f'+91{clean_num}'
+                    elif not clean_num.startswith('+'): # Add + if missing
+                        whatsapp_num = f'+{clean_num}'
+                    else:
+                        whatsapp_num = clean_num # Use as is if it already has +
+                    
+                    if not whatsapp_num.startswith('whatsapp:'):
+                        whatsapp_num = f'whatsapp:{whatsapp_num}'
+                session['whatsapp_number'] = whatsapp_num
+            else:
+                session['supplier_name'] = user.get('suppliername', 'Unknown Supplier') # Fallback to users.json
+                session['gst_number'] = user.get('GSTNumber', 'N/A') # Fallback to users.json
+                session['whatsapp_number'] = None # No WhatsApp number if supplier details not found
+            
+            print(f"User {username} logged in successfully with supplier code {session['supplier_code']}")
             return redirect(url_for('dashboard'))
         else:
-            error = 'Invalid credentials. Try again.'
-    return render_template('login.html', error=error)
+            print(f"Login failed for username: {username}")
+            return render_template('login.html', error='Invalid credentials')
+    return render_template('login.html', error=None)
 
 @app.route('/dashboard')
 def dashboard():
-    if 'user' not in session:
+    """Renders the dashboard page, requiring login."""
+    if not session.get('logged_in'):
         return redirect(url_for('login'))
-
-    supplier_name = session.get('suppliername', 'N/A')
-    gst_number = session.get('GSTNumber', 'N/A')
-    supplier_code = session.get('suppliercode', 'N/A') 
     
-    return render_template('dashboard.html', 
-                           user=session['user'],
-                           supplier_name=supplier_name,
-                           gst_number=gst_number,
-                           supplier_code=supplier_code) 
+    supplier_code = session.get('supplier_code')
+    supplier_name = session.get('supplier_name')
+    gst_number = session.get('gst_number')
 
-# Return supplier-specific paginated order data from JSON file
+    return render_template(
+        'dashboard.html', 
+        supplier_name=supplier_name,
+        gst_number=gst_number,
+        supplier_code=supplier_code # Pass supplier_code to JS for dynamic file naming
+    )
+
 @app.route('/get_orders')
 def get_orders():
-    suppliercode = session.get('suppliercode')
-    storename_filter = request.args.get('storename') 
+    """
+    Retrieves paginated order data for the logged-in supplier,
+    optionally filtered by store name.
+    """
+    if not session.get('logged_in'):
+        return jsonify({'success': False, 'error': 'Unauthorized'}), 401
 
-    page = request.args.get('page', 1, type=int)
-    per_page = request.args.get('per_page', 20, type=int) 
-    
-    # Construct the file path based on storename_filter and suppliercode
-    # If storename_filter is 'All Stores', it should load the main supplier file (e.g., 117.json)
-    # Otherwise, it should load the specific store-supplier file (e.g., NMC_117.json)
-    if storename_filter and storename_filter != 'All Stores':
-        file_name = f"{storename_filter}_{suppliercode}.json"
-    else:
-        file_name = f"{suppliercode}.json"
+    supplier_code = session.get('supplier_code')
+    page = int(request.args.get('page', 1))
+    per_page = int(request.args.get('per_page', 20))
+    store_name = request.args.get('storename', None) # Get storename from query params
 
-    file_path = os.path.join(DATA_DIR, file_name)
+    all_supplier_data, message, file_name = load_supplier_data(supplier_code, store_name)
 
-    orders_data = []
-    total_count = 0
+    if not all_supplier_data:
+        return jsonify({
+            'success': True, # Indicate that the request was processed, even if no data
+            'data': [], 
+            'total_count': 0, 
+            'page': page, 
+            'per_page': per_page,
+            'error': message # Use error key for message in this case
+        })
 
-    if not suppliercode or not os.path.exists(file_path):
-        # Provide a more specific error message based on the file expected
-        error_message = f"Order file '{file_name}' for supplier {suppliercode} not found in the 'data' directory."
-        print(f"ERROR: {error_message}")
-        return jsonify({'data': [], 'total_count': 0, 'error': error_message})
+    # Add 'remarks' field if it's missing for any item
+    # Also ensure OrderQty is a string for consistency in the frontend input
+    for item in all_supplier_data:
+        item['remarks'] = item.get('remarks', '')
+        item['OrderQty'] = str(item['OrderQty']) # Ensure it's a string for input value
 
+    # Sort data by SerialNo for consistent pagination
     try:
-        with open(file_path, 'r', encoding='utf-8-sig') as f:
-            full_data = json.load(f)
-            
-            # The filtering logic now assumes the correct file is already loaded.
-            # We still keep the OrderQty > 0 filter as it was initially for display.
-            filtered_data = [
-                item for item in full_data 
-                if item.get('OrderQty') is not None and int(item['OrderQty']) > 0
-            ]
-            
-            # Sort data (e.g., by ProductName)
-            filtered_data.sort(key=lambda x: x.get('ProductName', '').lower())
+        all_supplier_data.sort(key=lambda x: int(x.get('SerialNo', 0)))
+    except ValueError:
+        # Fallback if SerialNo is not always an integer
+        print("Warning: SerialNo not purely numeric, sorting might be inconsistent.")
+        pass
 
-            total_count = len(filtered_data)
-            
-            # Apply pagination
-            offset = (page - 1) * per_page
-            paginated_data = filtered_data[offset : offset + per_page]
+    total_count = len(all_supplier_data)
+    
+    # Apply pagination
+    start_index = (page - 1) * per_page
+    end_index = start_index + per_page
+    paginated_data = all_supplier_data[start_index:end_index]
 
-            # Add SerialNo to each item based on its position in the paginated list
-            results = []
-            for idx, item in enumerate(paginated_data, start=offset + 1):
-                item_copy = item.copy() 
-                item_copy['SerialNo'] = idx 
-                item_copy['Remarks'] = item_copy.get('remarks', '') if item_copy.get('remarks') is not None else ''
-                try:
-                    item_copy['OrderQty'] = int(item_copy.get('OrderQty', 0))
-                except ValueError:
-                    item_copy['OrderQty'] = 0 
-                results.append(item_copy)
-            
-        return jsonify({'data': results, 'total_count': total_count})
+    return jsonify({
+        'success': True,
+        'data': paginated_data,
+        'total_count': total_count,
+        'page': page,
+        'per_page': per_page
+    })
 
-    except json.JSONDecodeError as e:
-        print(f"Error decoding JSON file {file_path}: {e}")
-        return jsonify({'data': [], 'total_count': 0, 'error': f'Invalid JSON format in {file_name}.'})
-    except Exception as e:
-        print(f"Error fetching orders from {file_path}: {e}")
-        return jsonify({'data': [], 'total_count': 0, 'error': f'Server error reading {file_name}: {str(e)}'})
-
-# Update supplier order file
 @app.route('/update_orders', methods=['POST'])
 def update_orders():
-    suppliercode = session.get('suppliercode')
-    updated_items = request.json.get('updatedData')
-    user_whatsapp_number = session.get('whatsapp_number') 
-    
-    # Determine which file to update based on the store name of the first item
-    # This assumes all updated items in a single request belong to the same store.
-    # If not, this logic would need to be more complex to update multiple files.
-    file_to_update_storename = None
-    if updated_items:
-        file_to_update_storename = updated_items[0].get('StoreName')
-
-    if file_to_update_storename and file_to_update_storename != 'All Stores':
-        file_name = f"{file_to_update_storename}_{suppliercode}.json"
-    else:
-        # If 'All Stores' was selected, or if the update request doesn't specify a store for the item,
-        # we default to the main supplier file (e.g., 117.json).
-        # This part might need adjustment based on how your VB app generates / expects updates for 'All Stores'.
-        file_name = f"{suppliercode}.json"
-
-    file_path = os.path.join(DATA_DIR, file_name)
-
-    if not suppliercode or not updated_items:
-        return jsonify({'success': False, 'message': 'Invalid update data'})
-
-    if not os.path.exists(file_path):
-        return jsonify({'success': False, 'message': f"Supplier data file '{file_name}' not found."})
+    """
+    Updates order quantities and remarks in the relevant JSON file.
+    Determines the file to update based on `currentStore` sent from frontend.
+    """
+    if not session.get('logged_in'):
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 401
 
     try:
-        with open(file_path, 'r', encoding='utf-8-sig') as f:
-            current_data = json.load(f)
+        data = request.get_json()
+        updated_items = data.get('updatedData', [])
+        current_store = data.get('currentStore', None) # Get current store from frontend
+        supplier_code = session.get('supplier_code')
+        user_whatsapp_number = session.get('whatsapp_number') 
 
-        data_changed = False
-        updates_by_order_id = {}
+        if not updated_items:
+            return jsonify({'success': False, 'message': 'No data provided for update.'})
 
-        for update_item in updated_items:
-            product_code = update_item.get('ProductCode')
-            product_name = update_item.get('ProductName')
-            order_id = update_item.get('OrderId')
-            item_store_name = update_item.get('StoreName') 
+        # Determine the file name based on the current store
+        if current_store and current_store != 'All Stores':
+            file_name = f"{current_store}_{supplier_code}.json"
+        else:
+            file_name = f"{supplier_code}.json"
 
-            found = False
-            for item in current_data:
-                if item.get('ProductCode') == product_code and \
-                   item.get('OrderId') == order_id and \
-                   item.get('StoreName') == item_store_name: 
+        file_path = os.path.join(DATA_DIR, file_name)
+
+        if not os.path.exists(file_path):
+            return jsonify({'success': False, 'message': f'Data file for {file_name} not found.'})
+
+        current_data = []
+        if os.path.getsize(file_path) > 0:
+            with open(file_path, 'r', encoding='utf-8-sig') as f:
+                current_data = json.load(f)
+        else:
+            return jsonify({'success': False, 'message': f'Data file for {file_name} is empty.'})
+
+        changes_made = False
+        updates_for_whatsapp = {} # To aggregate updates for WhatsApp message
+
+        for updated_item in updated_items:
+            # Create a unique key for lookup, ensuring all identifying fields are used
+            product_code = updated_item['ProductCode']
+            product_name = updated_item.get('ProductName', 'N/A') # Get product name for message
+            order_id = updated_item['OrderId']
+            store_name = updated_item['StoreName'] 
+
+            for i, item in enumerate(current_data):
+                if (item.get('ProductCode') == product_code and
+                    item.get('OrderId') == order_id and
+                    item.get('StoreName') == store_name):
                     
-                    old_order_qty = int(item.get('OrderQty', 0))
+                    old_qty = str(item.get('OrderQty', '0'))
                     old_remarks = item.get('remarks', '')
 
-                    item['OrderQty'] = str(update_item.get('OrderQty'))
-                    item['remarks'] = update_item.get('remarks')
-                    
-                    if int(update_item.get('OrderQty')) != old_order_qty or update_item.get('remarks') != old_remarks:
-                        data_changed = True
-                        if order_id not in updates_by_order_id:
-                            updates_by_order_id[order_id] = {
-                                'store_name': item_store_name, 
-                                'products': []
-                            }
-                        updates_by_order_id[order_id]['products'].append(
-                            f"- {product_name}: Qty {old_order_qty} -> {update_item.get('OrderQty')}"
-                            f"{f', Remarks: "{update_item.get('remarks')}"' if update_item.get('remarks') else ''}"
-                        )
-                    found = True
-                    break
-            if not found:
-                print(f"Warning: Item not found for update in {file_name} - ProductCode: {product_code}, OrderId: {order_id}, StoreName: {item_store_name}")
+                    new_qty = str(updated_item['OrderQty']) 
+                    new_remarks = updated_item['remarks']
 
-        if data_changed:
+                    if old_qty != new_qty or old_remarks != new_remarks:
+                        item['OrderQty'] = new_qty
+                        item['remarks'] = new_remarks
+                        changes_made = True
+                        
+                        # Aggregate for WhatsApp message
+                        if order_id not in updates_for_whatsapp:
+                            updates_for_whatsapp[order_id] = {'store_name': store_name, 'products': []}
+                        updates_for_whatsapp[oid]['products'].append(
+                            f"- {product_name}: Qty {old_qty} -> {new_qty}" + 
+                            (f", Remarks: '{new_remarks}'" if new_remarks else "")
+                        )
+                    break 
+
+        if changes_made:
             with open(file_path, 'w', encoding='utf-8-sig') as f:
                 json.dump(current_data, f, indent=2, ensure_ascii=False) # Pretty print JSON
             
             # Send WhatsApp message if user has a number and changes were made
-            if user_whatsapp_number and updates_by_order_id:
-                for oid, details in updates_by_order_id.items():
-                    whatsapp_message_body = (
-                        f"Order update for Supplier: {session.get('suppliername')}\n"
+            if user_whatsapp_number and TWILIO_WHATSAPP_NUMBER and twilio_client:
+                for oid, details in updates_for_whatsapp.items():
+                    message_body = (
+                        f"Order Update for Supplier: {session.get('supplier_name', 'N/A')}\n"
                         f"Store: {details['store_name']}\n"
-                        f"Order ID: {oid}:\n"
+                        f"Order ID: {oid}\n"
                         + "\n".join(details['products'])
                     )
-                    send_whatsapp_message(user_whatsapp_number, whatsapp_message_body)
+                    send_whatsapp_message(user_whatsapp_number, message_body)
 
             return jsonify({'success': True, 'message': 'Orders updated successfully.'})
         else:
@@ -361,35 +353,43 @@ def update_orders():
 
 @app.route('/get_store_headers')
 def get_store_headers():
+    """Returns the list of store headers."""
     store_headers = load_store_headers()
     return jsonify({'data': store_headers})
 
+def send_whatsapp_message(to_number, message_body):
+    """Sends a WhatsApp message using Twilio."""
+    if not twilio_client or not TWILIO_WHATSAPP_NUMBER:
+        print("Twilio client not initialized or sender number missing. Cannot send WhatsApp message.")
+        return False
+
+    try:
+        message = twilio_client.messages.create(
+            from_=TWILIO_WHATSAPP_NUMBER,
+            body=message_body,
+            to=to_number 
+        )
+        print(f"WhatsApp message sent to {to_number}. SID: {message.sid}")
+        return True
+    except Exception as e:
+        print(f"Error sending WhatsApp message to {to_number}: {e}")
+        return False
+
 @app.route('/logout')
 def logout():
+    """Logs out the user by clearing the session."""
     session.clear()
     return redirect(url_for('login'))
 
+# This section ensures that initial data files (if missing) are created
+# with dummy content upon application startup for demonstration purposes.
+# In a real production environment, you would manage these files differently.
 if __name__ == '__main__':
     # Ensure data directory exists
     os.makedirs(DATA_DIR, exist_ok=True)
     
-    # In this version, the application expects these files to already exist.
-    # They are NOT created programmatically here.
-    # You MUST ensure that 'users.json', 'OrderSuppliers.json', 'storeheader.json',
-    # and all supplier-specific JSON files (e.g., '117.json', 'NMC_117.json')
-    # are present in the 'data' directory when the application starts.
-    # Example structure for your 'data' folder:
-    # data/
-    #   users.json
-    #   OrderSuppliers.json
-    #   storeheader.json
-    #   117.json
-    #   PALEPU.json
-    #   691.json
-    #   NMA_117.json
-    #   NMC_117.json
-    #   NMG_117.json
-    #   NMS_117.json
-
-    app.run(debug=True)
-
+    # In a production environment, ensure that 'users.json', 'OrderSuppliers.json', 
+    # 'storeheader.json', and all supplier-specific JSON files (e.g., '117.json', 
+    # 'NMC_117.json') are present in the 'data' directory when the application starts.
+    # The application will now only attempt to load these files.
+    app.run(debug=True, port=5000)

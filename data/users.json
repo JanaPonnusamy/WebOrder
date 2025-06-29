@@ -5,33 +5,5 @@
     "suppliercode": "117",
     "suppliername": "NATHAN MEDICAL AGENCIES",
     "GSTNumber": "Test"
-  },
-  {
-    "username": "PALEPU",
-    "password": "pass",
-    "suppliercode": "PALEPU",
-    "suppliername": "PALEPU PHARMA DISTRIBUTORS PVT LTD",
-    "GSTNumber": "Test"
-  },
-  {
-    "username": "691",
-    "password": "pass",
-    "suppliercode": "691",
-    "suppliername": "THANTHAI PHARMA DISTRIBUTOR",
-    "GSTNumber": "Test"
-  },
-  {
-    "username": "1391",
-    "password": "pass",
-    "suppliercode": "1391",
-    "suppliername": "THANTHAI PHARMA DISTRIBUTOR",
-    "GSTNumber": "Test"
-  },
-  {
-    "username": "362",
-    "password": "pass",
-    "suppliercode": "362",
-    "suppliername": "SRI SENTHIL MEDICAL AGENCIES",
-    "GSTNumber": "Test"
   }
 ]

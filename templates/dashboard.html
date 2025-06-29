@@ -25,14 +25,14 @@
             --transition: all 0.3s ease;
             --reset-button-color: #dc3545; /* Strong Red */
             --reset-button-hover: #c82333; /* Darker Strong Red */
-            --logout-button-color: #dc3545; /* Red for Logout */ /* MODIFIED */
-            --logout-button-hover: #c82333; /* Darker Red for Logout */ /* MODIFIED */
+            --logout-button-color: #dc3545; /* Red for Logout */
+            --logout-button-hover: #c82333; /* Darker Red for Logout */
 
             /* New specific colors for distinct sections */
-            --header-bg-start: #6a11cb; /* Purple */ /* ADDED */
-            --header-bg-end: #2575fc; /* Blue */ /* ADDED */
-            --details-bg-color: #e6eefc; /* Light Blue for details section */ /* ADDED */
-            --details-text-color: #444444; /* Darker text for details section */ /* ADDED */
+            --header-bg-start: #6a11cb; /* Purple */
+            --header-bg-end: #2575fc; /* Blue */
+            --details-bg-color: #e6eefc; /* Light Blue for details section */
+            --details-text-color: #444444; /* Darker text for details section */
         }
 
         * {
@@ -55,7 +55,7 @@
         }
 
         .header {
-            background: linear-gradient(135deg, var(--header-bg-start), var(--header-bg-end)); /* MODIFIED */
+            background: linear-gradient(135deg, var(--header-bg-start), var(--header-bg-end));
             padding: 15px 20px;
             border-radius: 8px;
             box-shadow: var(--shadow);
@@ -63,14 +63,14 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            color: white; /* Text color for header */ /* ADDED */
+            color: white; /* Text color for header */
         }
 
         .header h1 {
-            font-size: 28px; /* Slightly larger */ /* MODIFIED */
-            color: white; /* White for header text */ /* MODIFIED */
-            font-weight: 800; /* Bolder */ /* MODIFIED */
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.2); /* Subtle text shadow */ /* ADDED */
+            font-size: 28px; /* Slightly larger */
+            color: white; /* White for header text */
+            font-weight: 800; /* Bolder */
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2); /* Subtle text shadow */
         }
 
         .table-container {
@@ -86,19 +86,19 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 20px; /* MODIFIED: Reduced padding for height */
-            background-color: #e9ecef; /* Lighter background for header */
+            padding: 10px 20px;
+            background-color: #e9ecef;
             border-bottom: 1px solid var(--border-color);
         }
 
         .table-header h2 {
-            font-size: 18px; /* Slightly smaller */ /* MODIFIED */
+            font-size: 18px;
             font-weight: 600;
             color: var(--text-color);
         }
 
         .table-info {
-            font-size: 13px; /* Slightly smaller */ /* MODIFIED */
+            font-size: 13px;
             color: #666;
         }
 
@@ -186,6 +186,13 @@
             align-items: center;
             gap: 5px;
             font-weight: 600;
+            cursor: pointer; /* Indicates it's clickable to show input */
+            padding: 2px;
+            border-radius: 4px;
+        }
+
+        .remark-content:hover {
+            background-color: rgba(0,0,0,0.05); /* Subtle hover effect */
         }
 
         .remark-content i {
@@ -227,6 +234,7 @@
             white-space: normal;
             height: auto;
             min-height: 28px;
+            display: none; /* Hidden by default, shown when remark-content is clicked */
         }
 
         .grid td input[type="number"] {
@@ -265,10 +273,10 @@
             display: flex;
             justify-content: space-between;
             gap: 10px;
-            padding: 10px 20px; /* Increased padding */
+            padding: 10px 20px;
             border-top: 1px solid var(--border-color);
-            background-color: #e9ecef; /* Match table header */
-            border-radius: 0 0 8px 8px; /* Apply border radius to bottom actions */
+            background-color: #e9ecef;
+            border-radius: 0 0 8px 8px;
         }
 
         .actions-right {
@@ -283,14 +291,14 @@
 
 
         .btn {
-            padding: 10px 20px; /* Larger padding */
+            padding: 10px 20px;
             border: none;
-            border-radius: 8px; /* More rounded */
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 15px; /* Slightly larger font */
-            font-weight: 600; /* Bolder text */
+            font-size: 15px;
+            font-weight: 600;
             transition: var(--transition);
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for all buttons */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         .btn-primary {
@@ -300,7 +308,7 @@
 
         .btn-primary:hover {
             background-color: var(--secondary-color);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* More prominent hover shadow */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
         .btn-reset {
@@ -341,6 +349,14 @@
         #btnExportTXT:hover {
             background-color: #5a6268;
         }
+        
+        #btnExportJSON { /* New style for JSON export button */
+            background-color: #f39c12; /* Orange */
+        }
+        #btnExportJSON:hover {
+            background-color: #e67e22; /* Darker Orange */
+        }
+
 
         .btn-export { /* General export button styling, specific colors override this */
             color: white;
@@ -348,24 +364,24 @@
 
         /* Colorful icons inside export buttons */
         .btn-export i {
-            margin-right: 8px; /* Space between icon and text */
+            margin-right: 8px;
         }
 
         .logout-btn {
-            background-color: var(--logout-button-color); /* MODIFIED */
+            background-color: var(--logout-button-color);
             color: white;
-            padding: 10px 20px; /* Match other buttons */
+            padding: 10px 20px;
             border: none;
-            border-radius: 8px; /* More rounded */
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 15px; /* Slightly larger font */
-            font-weight: 600; /* Bolder text */
+            font-size: 15px;
+            font-weight: 600;
             transition: var(--transition);
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         .logout-btn:hover {
-            background-color: var(--logout-button-hover); /* MODIFIED */
+            background-color: var(--logout-button-hover);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
         
@@ -399,23 +415,23 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 8px; /* Increased gap */
-            padding: 12px; /* Increased padding */
+            gap: 8px;
+            padding: 12px;
             background-color: #f5f7fa;
             border-top: 1px solid var(--border-color);
             border-radius: 0 0 8px 8px;
         }
 
         .pagination-controls button {
-            padding: 8px 16px; /* Larger padding for pagination buttons */
+            padding: 8px 16px;
             border: 1px solid var(--border-color);
             border-radius: 6px;
             background-color: var(--card-color);
             color: var(--text-color);
             cursor: pointer;
-            font-size: 14px; /* Consistent font size */
+            font-size: 14px;
             transition: var(--transition);
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); /* Subtle shadow */
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
         }
 
         .pagination-controls button:hover:not(.active):not(:disabled) {
@@ -446,24 +462,60 @@
         }
 
         .details-section {
-            background-color: var(--details-bg-color); /* MODIFIED */
-            color: var(--details-text-color); /* MODIFIED */
+            background-color: var(--details-bg-color);
+            color: var(--details-text-color);
             padding: 15px 20px;
             border-radius: 8px;
             box-shadow: var(--shadow);
             margin-bottom: 20px;
-            font-size: 15px; /* Slightly larger font */
+            font-size: 15px;
             display: flex;
             flex-wrap: wrap;
-            gap: 8px 20px; /* Increased gaps */
+            gap: 8px 20px;
             justify-content: space-between;
-            border: 1px solid rgba(0, 0, 0, 0.05); /* Subtle border */ /* ADDED */
+            border: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         .details-section div {
             flex: 1 1 auto;
             white-space: nowrap;
         }
+
+        /* New styles for store selection dropdown */
+        .store-selector-container {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background-color: var(--card-color);
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        .store-selector-container label {
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 16px;
+        }
+
+        .store-selector-container select {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 15px;
+            background-color: white;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.2s ease;
+            min-width: 200px; /* Ensure it's wide enough */
+        }
+
+        .store-selector-container select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+        }
+
     </style>
 </head>
 <body>
@@ -473,11 +525,20 @@
             <a href="/logout" class="logout-btn">Logout</a>
         </div>
 
+        <!-- Store Selection Dropdown -->
+        <div class="store-selector-container">
+            <label for="storeSelect"><i class="fas fa-store"></i> Select Store:</label>
+            <select id="storeSelect">
+                <!-- Options will be populated by JavaScript -->
+                <option value="">Loading Stores...</option>
+            </select>
+        </div>
+
         <div class="details-section">
-            <div><strong>Order ID:</strong> 202506244719</div>
-            <div><strong>Store Details:</strong> Nathan Medicals C, Old Bus Stand, Perundurai</div>
-            <div><strong>Supplier Details:</strong> NATHAN MEDICAL AGENCIES</div>
-            <div><strong>Test</strong></div>
+            <div id="orderIdDisplay"><strong>Order ID:</strong> Loading...</div>
+            <div id="storeDetailsDisplay"><strong>Store Details:</strong> Loading...</div>
+            <div><strong>Supplier Details:</strong> {{ supplier_name }}</div>
+            <div><strong>GST Number:</strong> {{ gst_number }}</div>
         </div>
 
         <div class="table-container">
@@ -496,23 +557,27 @@
                             <th style="width: 90px; text-align: right;">Edited Qty</th>
                             <th style="width: 100px; text-align: center;">Unit</th>
                             <th style="width: 100px; text-align: right;">MRP</th>
-                            <th style="width: 400px;">Remarks</th> </tr>
+                            <th style="width: 400px;">Remarks</th>
+                        </tr>
                     </thead>
                     <tbody id="orderTableBody">
-                        </tbody>
+                        <!-- Order rows will be inserted here by JavaScript -->
+                    </tbody>
                 </table>
                 <div class="loading-overlay" id="loading-overlay">
                     <div class="spinner"></div>
                 </div>
             </div>
             <div class="pagination-controls" id="pagination-controls">
-                </div>
+                <!-- Pagination buttons will be inserted here by JavaScript -->
+            </div>
             <div class="actions">
                 <div class="actions-left">
                     <button class="btn btn-export" id="btnExportExcel"><i class="fas fa-file-excel"></i> Excel</button>
                     <button class="btn btn-export" id="btnExportPDF"><i class="fas fa-file-pdf"></i> PDF</button>
                     <button class="btn btn-export" id="btnExportCSV"><i class="fas fa-file-csv"></i> CSV</button>
                     <button class="btn btn-export" id="btnExportTXT"><i class="fas fa-file-alt"></i> TXT</button>
+                    <button class="btn btn-export" id="btnExportJSON"><i class="fas fa-file-code"></i> JSON</button>
                 </div>
                 <div class="actions-right">
                     <button class="btn btn-reset" id="btnReset"><i class="fas fa-undo"></i> Reset</button>
@@ -521,12 +586,10 @@
             </div>
         </div>
     </div>
-
     <div id="notification" class="notification"></div>
-
     <script>
         // Raw JavaScript content to prevent Jinja2 parsing errors within the script
-        {% raw %} 
+        {% raw %}
         const orderTableBody = document.getElementById('orderTableBody');
         const loadingOverlay = document.getElementById('loading-overlay');
         const notification = document.getElementById('notification');
@@ -538,12 +601,21 @@
         const btnExportPDF = document.getElementById('btnExportPDF');
         const btnExportCSV = document.getElementById('btnExportCSV');
         const btnExportTXT = document.getElementById('btnExportTXT');
+        const btnExportJSON = document.getElementById('btnExportJSON'); // Get new JSON export button
 
+        // New elements for store selection and dynamic details
+        const storeSelect = document.getElementById('storeSelect');
+        const orderIdDisplay = document.getElementById('orderIdDisplay');
+        const storeDetailsDisplay = document.getElementById('storeDetailsDisplay');
 
         let allData = []; // Stores all fetched data for the current supplier and store
+        let originalOrderData = {}; // Stores original order quantities and remarks for reset
         let currentPage = 1;
         const ITEMS_PER_PAGE = 20; // Number of items to display per page
         let totalItems = 0; // Total number of items fetched from the backend
+        let allStores = []; // To store all available stores from backend
+        // Access supplier_code passed from Flask
+        const supplierCode = "{{ supplier_code }}"; // From Flask session, wrapped in Jinja2 raw block
 
         /**
          * Displays a notification message.
@@ -574,126 +646,293 @@
         }
 
         /**
-         * Fetches order data from the backend.
-         * @param {number} page - The page number to fetch.
+         * Updates the pagination controls.
+         */
+        function updatePaginationControls() {
+            paginationContainer.innerHTML = '';
+            const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+
+            if (totalPages <= 1) {
+                return; // No pagination needed for 1 or less pages
+            }
+
+            // Previous button
+            const prevButton = document.createElement('button');
+            prevButton.textContent = 'Previous';
+            prevButton.disabled = currentPage === 1;
+            prevButton.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    loadOrders(currentPage);
+                }
+            });
+            paginationContainer.appendChild(prevButton);
+
+            // Page numbers
+            const maxPagesToShow = 5; // Number of page buttons to show (e.g., 1 ... 4 5 6 ... 10)
+            let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+            let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+
+            if (endPage - startPage + 1 < maxPagesToShow) {
+                startPage = Math.max(1, endPage - maxPagesToShow + 1);
+            }
+
+            if (startPage > 1) {
+                const firstPageButton = document.createElement('button');
+                firstPageButton.textContent = '1';
+                firstPageButton.addEventListener('click', () => { currentPage = 1; loadOrders(currentPage); });
+                paginationContainer.appendChild(firstPageButton);
+                if (startPage > 2) {
+                    const ellipsis = document.createElement('span');
+                    ellipsis.textContent = '...';
+                    ellipsis.classList.add('pagination-ellipsis');
+                    paginationContainer.appendChild(ellipsis);
+                }
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                const pageButton = document.createElement('button');
+                pageButton.textContent = i;
+                pageButton.classList.toggle('active', i === currentPage);
+                pageButton.addEventListener('click', () => {
+                    currentPage = i;
+                    loadOrders(currentPage);
+                });
+                paginationContainer.appendChild(pageButton);
+            }
+
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    const ellipsis = document.createElement('span');
+                    ellipsis.textContent = '...';
+                    ellipsis.classList.add('pagination-ellipsis');
+                    paginationContainer.appendChild(ellipsis);
+                }
+                const lastPageButton = document.createElement('button');
+                lastPageButton.textContent = totalPages;
+                lastPageButton.addEventListener('click', () => { currentPage = totalPages; loadOrders(currentPage); });
+                paginationContainer.appendChild(lastPageButton);
+            }
+
+            // Next button
+            const nextButton = document.createElement('button');
+            nextButton.textContent = 'Next';
+            nextButton.disabled = currentPage === totalPages;
+            nextButton.addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    loadOrders(currentPage);
+                }
+            });
+            paginationContainer.appendChild(nextButton);
+        }
+
+        /**
+         * Handles changes in the Order Quantity input field.
+         * Auto-populates remarks if quantity is 0, clears otherwise.
+         * @param {Event} event - The input change event.
+         */
+        function handleQuantityChange(event) {
+            const input = event.target;
+            const row = input.closest('tr');
+            const remarksInput = row.querySelector('.remark-input');
+            const remarksDisplay = row.querySelector('.remark-content'); // Get the display div
+
+            const newQty = parseInt(input.value, 10);
+            const originalOrderQty = parseInt(row.dataset.originalorderqty, 10); // Get original qty from dataset
+
+            // Update the displayed 'Order Qty' column
+            row.children[3].textContent = newQty; // Assuming 4th column is 'Order Qty'
+
+            // Call updateRemarkDisplay with current values
+            updateRemarkDisplay(remarksDisplay, remarksInput.value, newQty, originalOrderQty);
+        }
+
+        /**
+         * Loads order data from the backend based on current page and selected store.
+         * @param {number} page - The page number to load.
          */
         async function loadOrders(page = 1) {
             showLoading();
-            currentPage = page; // Set the current page
+            currentPage = page;
+            orderTableBody.innerHTML = ''; // Clear existing table rows
+            allData = []; // Clear previous data
+            originalOrderData = {}; // Clear original data
 
-            // Note: 'suppliercode' is implicitly handled by the session on the backend.
-            // 'storename' is passed as a query parameter.
-            const url = `/get_orders?page=${currentPage}&per_page=${ITEMS_PER_PAGE}&storename=NMC`;
+            const selectedStoreName = storeSelect.value; // Get selected store from dropdown
 
             try {
-                const response = await fetch(url);
-                if (!response.ok) {
-                    const errorText = await response.text(); // Get more detailed error from response
-                    throw new Error(`Network response was not ok: ${response.status} ${response.statusText} - ${errorText}`);
-                }
+                const response = await fetch(`/get_orders?page=${currentPage}&per_page=${ITEMS_PER_PAGE}&storename=${encodeURIComponent(selectedStoreName)}`);
                 const result = await response.json();
-                allData = result.data; // Store the paginated data
-                totalItems = result.total_count; // Store the total count
 
-                renderTable(); // Render the current page data
-                createPagination(); // Create/update pagination buttons
+                if (result.data) {
+                    allData = result.data;
+                    totalItems = result.total_count;
+                    
+                    // Update header details based on first item, or clear if no data
+                    if (allData.length > 0) {
+                        const firstItem = allData[0];
+                        orderIdDisplay.innerHTML = `<strong>Order ID:</strong> ${firstItem.OrderId || 'N/A'}`;
+                        
+                        // Find the full store details from allStores based on firstItem.StoreName
+                        const storeFound = allStores.find(s => s.StoreName === firstItem.StoreName);
+                        if (storeFound) {
+                            storeDetailsDisplay.innerHTML = `<strong>Store Details:</strong> ${storeFound.StoreFullName || storeFound.StoreName}, ${storeFound.Address1 || ''}, ${storeFound.Address2 || ''}`;
+                        } else {
+                            storeDetailsDisplay.innerHTML = `<strong>Store Details:</strong> ${firstItem.StoreName || 'N/A'}`;
+                        }
+
+                    } else {
+                        // If no orders, try to get store info from dropdown
+                        const selectedStoreInDropdown = allStores.find(s => s.StoreName === selectedStoreName);
+                        if (selectedStoreInDropdown) {
+                            orderIdDisplay.innerHTML = `<strong>Order ID:</strong> N/A (No orders)`;
+                            storeDetailsDisplay.innerHTML = `<strong>Store Details:</strong> ${selectedStoreInDropdown.StoreFullName || selectedStoreInDropdown.StoreName}, ${selectedStoreInDropdown.Address1 || ''}, ${selectedStoreInDropdown.Address2 || ''}`;
+                        } else {
+                             orderIdDisplay.innerHTML = `<strong>Order ID:</strong> N/A`;
+                             storeDetailsDisplay.innerHTML = `<strong>Store Details:</strong> N/A`;
+                        }
+                       
+                    }
+
+                    allData.forEach(item => {
+                        const row = document.createElement('tr');
+                        row.dataset.productCode = item.ProductCode;
+                        row.dataset.orderId = item.OrderId; // Store OrderId for update
+                        row.dataset.storeName = item.StoreName; // Store StoreName for update
+                        row.dataset.originalorderqty = item.OrderQty; // Store original quantity
+
+                        // Store original quantity and remarks for reset and change tracking
+                        originalOrderData[`${item.ProductCode}-${item.OrderId}-${item.StoreName}`] = {
+                            OrderQty: parseInt(item.OrderQty, 10), // Ensure integer
+                            Remarks: item.Remarks || ''
+                        };
+
+                        // Create the remarks input field (hidden by default)
+                        const remarksInput = document.createElement('input');
+                        remarksInput.type = 'text';
+                        remarksInput.classList.add('remark-input');
+                        remarksInput.placeholder = 'Add custom remarks';
+                        remarksInput.value = item.Remarks || ''; // Set initial value from data
+                        remarksInput.dataset.originalvalue = item.Remarks || ''; // Store original remarks for comparison
+
+                        // Create the remarks display div
+                        const remarksDisplay = document.createElement('div');
+                        remarksDisplay.classList.add('remark-content');
+                        remarksDisplay.addEventListener('click', () => {
+                            // Only allow editing if the current remark is custom or empty/available
+                            const currentDisplayedRemark = remarksDisplay.textContent.trim().replace(/^\S+\s/, ''); // Remove icon
+                            const isAutoGenerated = ['No Stock', 'Only Available Edit Qty', 'Qty Increased', 'Available'].includes(currentDisplayedRemark);
+
+                            if (!isAutoGenerated) {
+                                remarksDisplay.style.display = 'none';
+                                remarksInput.style.display = 'block';
+                                remarksInput.focus();
+                            }
+                        });
+                        remarksInput.addEventListener('blur', () => {
+                            // When input loses focus, hide it and show display div, then update
+                            remarksInput.style.display = 'none';
+                            remarksDisplay.style.display = 'flex';
+                            updateRemarkDisplay(remarksDisplay, remarksInput.value, parseInt(row.querySelector('.order-qty-input').value, 10), parseInt(row.dataset.originalorderqty, 10));
+                        });
+
+
+                        row.innerHTML = `
+                            <td>${item.SerialNo}</td>
+                            <td>${item.ProductCode}</td>
+                            <td>${item.ProductName}</td>
+                            <td>${item.OrderQty}</td>
+                            <td><input type="number" value="${item.OrderQty}" min="0" class="order-qty-input"></td>
+                            <td>${item.UnitDescription || ''}</td>
+                            <td>${parseFloat(item.MRP || 0).toFixed(2)}</td>
+                            <td class="remark-cell">
+                                <!-- Remarks will be displayed here -->
+                            </td>
+                        `;
+                        const remarkCell = row.querySelector('.remark-cell');
+                        remarkCell.appendChild(remarksDisplay); // Append display div first
+                        remarkCell.appendChild(remarksInput); // Append input field second
+
+                        orderTableBody.appendChild(row);
+
+                        // Call updateRemarkDisplay initially for each row to set correct icon/text/visibility
+                        updateRemarkDisplay(remarksDisplay, item.Remarks || '', parseInt(item.OrderQty, 10), parseInt(item.OrderQty, 10));
+                    });
+
+                    // Attach event listeners to newly created input fields
+                    orderTableBody.querySelectorAll('.order-qty-input').forEach(input => {
+                        input.addEventListener('input', handleQuantityChange);
+                    });
+
+                    tableInfo.textContent = `Showing ${allData.length} of ${totalItems} orders`;
+                    updatePaginationControls(); // Update pagination after data load
+                } else {
+                    orderTableBody.innerHTML = '<tr><td colspan="8">No orders found for the selected store or supplier.</td></tr>';
+                    tableInfo.textContent = `Showing 0 of 0 orders`;
+                    orderIdDisplay.innerHTML = `<strong>Order ID:</strong> N/A`;
+                    storeDetailsDisplay.innerHTML = `<strong>Store Details:</strong> N/A`;
+                    totalItems = 0;
+                    updatePaginationControls();
+                    showNotification('Info', result.error || 'No orders to display.', 'info');
+                }
             } catch (error) {
                 console.error('Error loading orders:', error);
-                showNotification('Error', 'Failed to load order data. Check console for details.', 'error');
+                orderTableBody.innerHTML = '<tr><td colspan="8">Error loading orders. Please try again.</td></tr>';
+                tableInfo.textContent = `Error loading orders`;
+                orderIdDisplay.innerHTML = `<strong>Order ID:</strong> Error`;
+                storeDetailsDisplay.innerHTML = `<strong>Store Details:</strong> Error`;
+                totalItems = 0;
+                updatePaginationControls();
+                showNotification('Error', `Failed to load orders: ${error.message}`, 'error');
             } finally {
                 hideLoading();
             }
         }
 
         /**
-         * Renders the current page of order data into the table.
+         * Populates the store selection dropdown.
          */
-        function renderTable() {
-            orderTableBody.innerHTML = ''; // Clear existing table rows
+        function populateStoreDropdown(stores) {
+            storeSelect.innerHTML = ''; // Clear existing options
+            allStores = stores; // Store all fetched stores globally
 
-            if (allData.length === 0) {
-                const noDataRow = document.createElement('tr');
-                // Colspan remains 8 based on the current column count (S.No, PC, PN, OQ, EQ, Unit, MRP, Remarks)
-                noDataRow.innerHTML = `<td colspan="8" style="text-align: center; padding: 20px;">No Orders Found for this selection.</td>`;
-                orderTableBody.appendChild(noDataRow);
-                updateTableInfo();
-                return;
+            // Add "All Stores" option first
+            const allStoresOption = document.createElement('option');
+            allStoresOption.value = 'All Stores';
+            allStoresOption.textContent = 'All Stores (Show All)';
+            storeSelect.appendChild(allStoresOption);
+
+
+            stores.forEach(store => {
+                const option = document.createElement('option');
+                option.value = store.StoreName;
+                option.textContent = store.StoreName;
+                storeSelect.appendChild(option);
+            });
+
+            // Set default selection to the first store or 'All Stores'
+            if (stores.length > 0) {
+                 // Try to select 'NMC' if it exists, otherwise select the first store, or 'All Stores'
+                 const defaultStoreName = 'NMC';
+                 const nmcStore = stores.find(s => s.StoreName === defaultStoreName);
+                 if (nmcStore) {
+                     storeSelect.value = defaultStoreName;
+                 } else {
+                     // Check if 'NMS' exists, otherwise default to first available store
+                     const nmsStore = stores.find(s => s.StoreName === 'NMS');
+                     if (nmsStore) {
+                         storeSelect.value = 'NMS';
+                     } else {
+                         storeSelect.value = stores[0].StoreName; // Select the first store
+                     }
+                 }
+            } else {
+                storeSelect.value = 'All Stores';
             }
 
-            allData.forEach((rowData) => {
-                const tr = document.createElement('tr');
-                // Store all relevant data as dataset attributes on the row for easy retrieval
-                tr.dataset.productcode = rowData.ProductCode;
-                tr.dataset.productname = rowData.ProductName;
-                tr.dataset.saleunit = rowData.SaleUnit;
-                tr.dataset.orderid = rowData.OrderId;
-                tr.dataset.storename = rowData.StoreName; // Keep for backend if needed
-                tr.dataset.originalorderqty = rowData.OrderQty; // Store original quantity
-                // Removed unused dataset attributes: storecode, wantedtype, lastreceiveddate, lastsaledate, producttypename
-
-                // Create the editable input for remarks
-                const remarksInput = document.createElement('input');
-                remarksInput.type = 'text';
-                remarksInput.value = rowData.Remarks || '';
-                remarksInput.placeholder = 'Enter remarks...';
-                remarksInput.classList.add('remark-input');
-                remarksInput.dataset.originalvalue = rowData.Remarks || ''; // Store original remarks value
-
-                // Create a div to display the remarks with icon
-                const remarksDisplay = document.createElement('div');
-                remarksDisplay.classList.add('remark-content');
-                
-                remarksInput.addEventListener('input', (event) => {
-                    const currentEditedQty = parseInt(tr.querySelector('input[type="number"]').value, 10);
-                    updateRemarkDisplay(remarksDisplay, event.target.value, currentEditedQty, parseInt(tr.dataset.originalorderqty, 10));
-                });
-
-                const editQtyInput = document.createElement('input');
-                editQtyInput.type = 'number';
-                editQtyInput.value = rowData.OrderQty;
-                editQtyInput.min = 0; // Ensure non-negative
-                editQtyInput.dataset.originalvalue = rowData.OrderQty; // Store original for comparison
-                editQtyInput.addEventListener('input', (event) => {
-                    let newValue = event.target.value.trim();
-                    if (newValue === '' || isNaN(newValue)) {
-                        newValue = 0; // Treat empty or invalid input as 0
-                        event.target.value = ''; // Keep input empty visually
-                    } else {
-                        newValue = parseInt(newValue, 10);
-                        event.target.value = newValue; // Update input field (removes leading zeros, etc.)
-                    }
-                    updateRemarkDisplay(remarksDisplay, remarksInput.value, newValue, parseInt(rowData.OrderQty, 10));
-                });
-                
-                // Format MRP to 2 decimal places
-                const formattedMRP = rowData.MRP && !isNaN(parseFloat(rowData.MRP)) ? parseFloat(rowData.MRP).toFixed(2) : '0.00';
-
-                // Set the innerHTML of the row with correct columns and placeholders
-                // Order: S.No, Product Code, Product Name, Order Qty, Edited Qty, Unit, MRP, Remarks
-                tr.innerHTML = `
-                    <td>${rowData.SerialNo}</td>
-                    <td>${rowData.ProductCode}</td>
-                    <td>${rowData.ProductName}</td>
-                    <td style="text-align: right;">${rowData.OrderQty}</td>
-                    <td id="edit-qty-cell-${rowData.ProductCode}-${rowData.OrderId}"></td>
-                    <td style="text-align: center;">${rowData.SaleUnit || ''}</td>
-                    <td style="text-align: right;">${formattedMRP}</td>
-                    <td id="remark-cell-${rowData.ProductCode}-${rowData.OrderId}"></td>
-                `;
-                
-                // Append the dynamically created inputs to their respective cells
-                tr.querySelector(`#edit-qty-cell-${rowData.ProductCode}-${rowData.OrderId}`).appendChild(editQtyInput);
-                const remarkCellElement = tr.querySelector(`#remark-cell-${rowData.ProductCode}-${rowData.OrderId}`);
-                remarkCellElement.appendChild(remarksDisplay);
-                remarkCellElement.appendChild(remarksInput);
-                remarkCellElement.classList.add('remark-cell'); // Add the class here
-
-                // Initial update of remarks based on original OrderQty and Remarks (for icons)
-                updateRemarkDisplay(remarksDisplay, rowData.Remarks, rowData.OrderQty, rowData.OrderQty);
-
-                orderTableBody.appendChild(tr);
-            });
-            updateTableInfo();
+            // Load orders for the initial selected store
+            loadOrders();
         }
 
         /**
@@ -708,370 +947,138 @@
             let statusClass = '';
             let displayedText = remarkText;
 
-            // Normalize values for comparison
-            remarkText = (remarkText || '').trim();
-            currentQty = parseInt(currentQty, 10);
-            originalOrderQty = parseInt(originalOrderQty, 10);
+            // Ensure values are numbers for comparison
+            currentQty = parseInt(currentQty, 10) || 0;
+            originalOrderQty = parseInt(originalOrderQty, 10) || 0;
 
-            // Determine status based on standard remarks first
-            if (remarkText === 'Not Available') {
-                iconClass = 'fas fa-times-circle';
-                statusClass = 'status-danger';
-            } else if (remarkText === 'Only Available Edit Qty') {
-                iconClass = 'fas fa-exclamation-circle';
-                statusClass = 'status-warning';
-            } else if (remarkText === 'Qty Increased') {
-                iconClass = 'fas fa-arrow-alt-circle-up';
-                statusClass = 'status-info';
-            } else if (remarkText === 'Available' || remarkText === '') { // If remarks is empty or "Available"
-                iconClass = 'fas fa-check-circle';
-                statusClass = 'status-available';
-                if (remarkText === '') {
-                    displayedText = 'Available'; // Display "Available" if no custom remark
-                }
-            } else {
-                // For custom remarks, show a general info icon
-                iconClass = 'fas fa-info-circle';
-                statusClass = 'status-info';
-            }
+            // Define known remarks that should trigger specific icons/behavior
+            const autoRemarks = ['No Stock', 'Only Available Edit Qty', 'Qty Increased', 'Available'];
+            const originalRemarkIsAuto = autoRemarks.includes(remarkText);
 
-            // Override status based on Edited Qty if it deviates from original
+            // Logic to determine remark based on quantity changes
             if (currentQty === 0) {
                 iconClass = 'fas fa-times-circle';
                 statusClass = 'status-danger';
-                displayedText = remarkText || 'Not Available';
+                displayedText = 'No Stock';
             } else if (currentQty < originalOrderQty) {
                 iconClass = 'fas fa-exclamation-circle';
                 statusClass = 'status-warning';
-                displayedText = remarkText || 'Only Available Edit Qty';
+                displayedText = 'Only Available Edit Qty';
             } else if (currentQty > originalOrderQty) {
                 iconClass = 'fas fa-arrow-alt-circle-up';
                 statusClass = 'status-info';
-                displayedText = remarkText || 'Qty Increased';
-            } else if (currentQty === originalOrderQty && remarkText === '') {
+                displayedText = 'Qty Increased';
+            } else { // currentQty === originalOrderQty
                 iconClass = 'fas fa-check-circle';
                 statusClass = 'status-available';
                 displayedText = 'Available';
             }
 
+            // If the original remark was a custom one (not an auto-generated one or empty/Available), prioritize it
+            // Only if the current edited quantity does not force an auto-remark
+            if (originalRemarkIsAuto === false && remarkText.trim() !== '' && currentQty !== 0 && currentQty >= originalOrderQty) {
+                 displayedText = remarkText; // Keep the original custom remark
+                 iconClass = 'fas fa-info-circle'; // General info icon for custom remarks
+                 statusClass = 'status-info';
+            }
+            
+            // If there's a custom remark *currently entered* in the hidden input, and it's not an auto-generated one,
+            // then display that custom remark regardless of quantity (unless quantity is 0, which overrides)
+            const remarksInput = displayElement.parentElement.querySelector('.remark-input');
+            if (remarksInput && remarksInput.value.trim() !== '' && !autoRemarks.includes(remarksInput.value.trim())) {
+                if (currentQty !== 0) { // If qty is not zero, show custom remark
+                    displayedText = remarksInput.value.trim();
+                    iconClass = 'fas fa-info-circle';
+                    statusClass = 'status-info';
+                }
+            }
+
 
             displayElement.innerHTML = `<i class="${iconClass}"></i> ${displayedText}`;
             displayElement.className = `remark-content ${statusClass}`;
-            displayElement.style.display = 'flex'; // Ensure display element is visible
-
-            // Control visibility of the text input based on the remark type
-            const parentCell = displayElement.parentElement;
-            const remarkInput = parentCell.querySelector('.remark-input');
-            if (remarkInput) {
-                // If it's a custom remark (not one of the predefined ones or empty for "Available")
-                if (!['Not Available', 'Only Available Edit Qty', 'Qty Increased', 'Available', ''].includes(remarkText)) {
-                    remarkInput.style.display = 'block';
+            
+            // Control visibility of the text input
+            if (remarksInput) {
+                // If the currently displayed text is an auto-generated remark, hide the input and show the display div
+                if (['No Stock', 'Only Available Edit Qty', 'Qty Increased', 'Available'].includes(displayedText) && remarksInput.value.trim() === '') {
+                    remarksInput.style.display = 'none';
+                    displayElement.style.display = 'flex';
+                } else if (remarksInput.value.trim() !== '') {
+                    // If there's a custom remark in the input, hide display and show input
+                    remarksInput.style.display = 'block';
                     displayElement.style.display = 'none';
                 } else {
-                    remarkInput.style.display = 'none';
+                     // Default to displaying the auto-generated content (e.g., "Available" if no custom remark)
+                    remarksInput.style.display = 'none';
                     displayElement.style.display = 'flex';
                 }
             }
         }
 
 
-        /**
-         * Updates the table information display (e.g., "Showing 1-20 of 100 products").
-         */
-        function updateTableInfo() {
-            const start = (currentPage - 1) * ITEMS_PER_PAGE + 1;
-            const end = Math.min(start + ITEMS_PER_PAGE - 1, totalItems);
-            tableInfo.textContent = `Showing ${totalItems > 0 ? start : 0}-${end} of ${totalItems} products`;
-        }
-
-        /**
-         * Creates and renders the pagination buttons dynamically.
-         */
-        function createPagination() {
-            const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
-            paginationContainer.innerHTML = ''; // Clear existing pagination
-
-            if (totalPages <= 1) {
-                return; // Do not display pagination if there is only one page or no data
-            }
-
-            // Create 'Previous' button
-            const prevBtn = document.createElement('button');
-            prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i> Previous';
-            prevBtn.disabled = currentPage === 1;
-            prevBtn.addEventListener('click', () => {
-                if (currentPage > 1) {
-                    loadOrders(currentPage - 1);
-                }
-            });
-            paginationContainer.appendChild(prevBtn);
-
-            // Render page numbers
-            const maxPagesToShow = 5; // Max number of page buttons to display
-            let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
-            let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
-
-            if (endPage - startPage + 1 < maxPagesToShow) {
-                startPage = Math.max(1, endPage - maxPagesToShow + 1);
-            }
-
-            if (startPage > 1) {
-                const firstPageBtn = document.createElement('button');
-                firstPageBtn.textContent = '1';
-                firstPageBtn.addEventListener('click', () => loadOrders(1));
-                paginationContainer.appendChild(firstPageBtn);
-                if (startPage > 2) {
-                    const ellipsis = document.createElement('span');
-                    ellipsis.textContent = '...';
-                    ellipsis.classList.add('pagination-ellipsis');
-                    paginationContainer.appendChild(ellipsis);
-                }
-            }
-
-            for (let i = startPage; i <= endPage; i++) {
-                const pageBtn = document.createElement('button');
-                pageBtn.textContent = i;
-                if (i === currentPage) {
-                    pageBtn.classList.add('active');
-                }
-                pageBtn.addEventListener('click', () => loadOrders(i));
-                paginationContainer.appendChild(pageBtn);
-            }
-
-            if (endPage < totalPages) {
-                if (endPage < totalPages - 1) {
-                    const ellipsis = document.createElement('span');
-                    ellipsis.textContent = '...';
-                    ellipsis.classList.add('pagination-ellipsis');
-                    paginationContainer.appendChild(ellipsis);
-                }
-                const lastPageBtn = document.createElement('button');
-                lastPageBtn.textContent = totalPages;
-                lastPageBtn.addEventListener('click', () => loadOrders(totalPages));
-                paginationContainer.appendChild(lastPageBtn);
-            }
-
-            // Create 'Next' button
-            const nextBtn = document.createElement('button');
-            nextBtn.innerHTML = 'Next <i class="fas fa-chevron-right"></i>';
-            nextBtn.disabled = currentPage === totalPages;
-            nextBtn.addEventListener('click', () => {
-                if (currentPage < totalPages) {
-                    loadOrders(currentPage + 1);
-                }
-            });
-            paginationContainer.appendChild(nextBtn);
-        }
-
-        /**
-         * Extracts table data from the currently rendered table for export.
-         * Returns an array of arrays, where the first array is headers and subsequent arrays are rows.
-         */
-        function getTableDataForExport() {
-            const table = document.getElementById('dgvMain');
-            const headers = Array.from(table.querySelectorAll('th')).map(th => th.innerText.trim());
-            const rows = Array.from(table.querySelectorAll('tbody tr'));
-
-            const data = [headers]; // Start with headers
-
-            rows.forEach(row => {
-                if (row.querySelector('td') && row.querySelector('td').textContent.includes('No Orders Found')) {
-                    // Skip the "No Orders Found" row
-                    return;
-                }
-                const rowData = [];
-                // S.No
-                rowData.push(row.cells[0].innerText.trim());
-                // Product Code
-                rowData.push(row.cells[1].innerText.trim());
-                // Product Name
-                rowData.push(row.cells[2].innerText.trim());
-                // Order Qty
-                rowData.push(row.cells[3].innerText.trim());
-                // Edited Qty (get value from input)
-                rowData.push(row.cells[4].querySelector('input[type="number"]').value);
-                // Unit
-                rowData.push(row.cells[5].innerText.trim());
-                // MRP
-                rowData.push(row.cells[6].innerText.trim());
-                // Remarks (get value from input, if hidden, get from display div)
-                const remarksInput = row.cells[7].querySelector('input[type="text"].remark-input');
-                const remarksDisplay = row.cells[7].querySelector('.remark-content');
-                if (remarksInput.style.display !== 'none' || remarksInput.value.trim() !== '') {
-                    rowData.push(remarksInput.value.trim());
-                } else {
-                    rowData.push(remarksDisplay.textContent.trim().replace(/^\S+\s/, '')); // Remove icon text
-                }
-                
-                data.push(rowData);
-            });
-            return data;
-        }
-
-        /**
-         * Downloads data as a file.
-         * @param {string} data - The data to download.
-         * @param {string} filename - The name of the file.
-         * @param {string} type - The MIME type of the file.
-         */
-        function downloadFile(data, filename, type) {
-            const blob = new Blob([data], { type: type });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-
-        /**
-         * Exports table data to Excel (.xlsx) format.
-         */
-        function exportToExcel() {
-            const data = getTableDataForExport();
-            if (data.length <= 1) { // Only headers or no data
-                showNotification('Info', 'No data to export to Excel.', 'info');
-                return;
-            }
-            const ws = XLSX.utils.aoa_to_sheet(data);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Order Details");
-            XLSX.writeFile(wb, "Order_Details.xlsx");
-            showNotification('Success', 'Table exported to Excel successfully!', 'success');
-        }
-
-        /**
-         * Exports table data to PDF format.
-         */
-        function exportToPDF() {
-            const headers = Array.from(document.querySelectorAll('#dgvMain th')).map(th => th.innerText.trim());
-            const rows = getTableDataForExport().slice(1); // Exclude headers from data, as autotable takes them separately
-
-            if (rows.length === 0) {
-                showNotification('Info', 'No data to export to PDF.', 'info');
-                return;
-            }
-
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-
-            doc.autoTable({
-                head: [headers],
-                body: rows,
-                startY: 20,
-                headStyles: { fillColor: [233, 236, 239], textColor: [73, 80, 87], fontStyle: 'bold' },
-                styles: {
-                    fontSize: 8,
-                    cellPadding: 2,
-                    valign: 'middle',
-                    overflow: 'linebreak'
-                },
-                columnStyles: {
-                    // Align numeric columns right
-                    3: { halign: 'right' }, // Order Qty
-                    4: { halign: 'right' }, // Edited Qty
-                    6: { halign: 'right' }, // MRP
-                    // Center align Unit
-                    5: { halign: 'center' }, // Unit
-                },
-                didParseCell: function(data) {
-                    // Fix for remarks cell potentially having icon
-                    if (data.column.index === 7 && data.cell.raw instanceof HTMLElement) {
-                        const remarkDisplay = data.cell.raw.querySelector('.remark-content');
-                        if (remarkDisplay) {
-                            data.cell.text = [remarkDisplay.textContent.trim().replace(/^\S+\s/, '')];
-                        }
-                    }
-                }
-            });
-            doc.save("Order_Details.pdf");
-            showNotification('Success', 'Table exported to PDF successfully!', 'success');
-        }
-
-        /**
-         * Exports table data to CSV format.
-         */
-        function exportToCSV() {
-            const data = getTableDataForExport();
-            if (data.length <= 1) {
-                showNotification('Info', 'No data to export to CSV.', 'info');
-                return;
-            }
-            const csvContent = data.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
-            downloadFile(csvContent, "Order_Details.csv", "text/csv;charset=utf-8;");
-            showNotification('Success', 'Table exported to CSV successfully!', 'success');
-        }
-
-        /**
-         * Exports table data to TXT format.
-         */
-        function exportToTXT() {
-            const data = getTableDataForExport();
-            if (data.length <= 1) {
-                showNotification('Info', 'No data to export to TXT.', 'info');
-                return;
-            }
-            const txtContent = data.map(row => row.join('\t')).join('\n'); // Tab-separated
-            downloadFile(txtContent, "Order_Details.txt", "text/plain;charset=utf-8;");
-            showNotification('Success', 'Table exported to TXT successfully!', 'success');
-        }
-
-
-        // Event listener for the 'Submit' button
+        // Event listener for the 'Save Changes' button
         btnSubmit.addEventListener('click', async () => {
             showLoading();
-            const updatedData = [];
+            const changes = [];
             const rows = orderTableBody.querySelectorAll('tr');
 
-            if (rows.length === 0 || (rows[0].querySelector('td') && rows[0].querySelector('td').textContent.includes('No Orders Found'))) {
+            if (rows.length === 0 || (rows[0].querySelector('td') && rows[0].querySelector('td').textContent.includes('No orders found'))) {
                 showNotification('Info', 'No orders to submit. Table is empty.', 'info');
                 hideLoading();
                 return;
             }
 
-            rows.forEach((row) => {
-                const editQtyInput = row.querySelector('input[type="number"]');
+            rows.forEach(row => {
+                const productCode = row.dataset.productCode;
+                const orderId = row.dataset.orderId;
+                const storeName = row.dataset.storeName;
+
+                const editedQtyInput = row.querySelector('input[type="number"]');
                 const remarksInput = row.querySelector('input[type="text"].remark-input');
+                const remarksDisplay = row.querySelector('.remark-content');
 
-                const originalOrderQty = parseInt(row.dataset.originalorderqty, 10);
-                const currentEditedQty = parseInt(editQtyInput.value, 10);
-                const originalRemarks = remarksInput.dataset.originalvalue || '';
-                const currentRemarks = remarksInput.value;
 
-                // Only include rows where Edited Qty or Remarks have changed
-                if (currentEditedQty !== originalOrderQty || currentRemarks !== originalRemarks) {
-                    updatedData.push({
-                        ProductCode: row.dataset.productcode,
-                        ProductName: row.dataset.productname,
-                        OrderQty: currentEditedQty, // This is the edited quantity
-                        OriginalOrderQty: originalOrderQty, // Pass original quantity
-                        SaleUnit: row.dataset.saleunit,
-                        remarks: currentRemarks,
-                        OrderId: row.dataset.orderid,
-                        StoreName: row.dataset.storename, // Use the store name from dataset
-                        // No need to pass WantedType, StoreCode, LastReceivedDate, LastSaleDate, ProductTypeName to backend as they are not updated
+                const newOrderQty = editedQtyInput ? parseInt(editedQtyInput.value, 10) : null;
+                // Get the remark that is *actually visible/active*. If input is visible, use its value. Else, use the displayed text.
+                let newRemarks = '';
+                if (remarksInput.style.display === 'block') { // If input is visible, user is likely typing a custom remark
+                    newRemarks = remarksInput.value.trim();
+                } else { // If input is hidden, use the auto-generated text from the display div
+                    newRemarks = remarksDisplay.textContent.trim().replace(/^\S+\s/, ''); // Remove icon text
+                    if (newRemarks === 'Available') newRemarks = ''; // If it auto-set to 'Available', store as empty
+                }
+
+
+                // Get original values for comparison
+                const originalKey = `${productCode}-${orderId}-${storeName}`;
+                const originalItem = originalOrderData[originalKey];
+
+                if (originalItem && (newOrderQty !== originalItem.OrderQty || newRemarks !== originalItem.Remarks)) {
+                    changes.push({
+                        ProductCode: productCode,
+                        OrderId: orderId,
+                        StoreName: storeName,
+                        OrderQty: newOrderQty,
+                        remarks: newRemarks
                     });
                 }
             });
 
-            if (updatedData.length > 0) {
+            if (changes.length > 0) {
                 try {
+                    const currentSelectedStore = storeSelect.value; 
+
                     const response = await fetch('/update_orders', {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ updatedData: updatedData })
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ updatedData: changes, currentStore: currentSelectedStore }) 
                     });
-
-                    if (!response.ok) {
-                        const errorText = await response.text();
-                        throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
-                    }
                     const data = await response.json();
+
                     if (data.success) {
                         showNotification('Success', data.message, 'success');
-                        // Reload orders to reflect changes and reset inputs
                         loadOrders(currentPage);
                     } else {
                         showNotification('Error', data.message || 'Failed to update order quantities', 'error');
@@ -1103,11 +1110,191 @@
         btnExportPDF.addEventListener('click', exportToPDF);
         btnExportCSV.addEventListener('click', exportToCSV);
         btnExportTXT.addEventListener('click', exportToTXT);
+        btnExportJSON.addEventListener('click', exportToJson); 
+
+        // Export functions (mostly unchanged from your previous code, adapted for 'allData')
+        function exportToExcel() {
+            if (allData.length === 0) {
+                showNotification('Info', 'No data to export to Excel.', 'info');
+                return;
+            }
+
+            const ws = XLSX.utils.json_to_sheet(allData.map(item => ({
+                'S.No': item.SerialNo,
+                'Product Code': item.ProductCode,
+                'Product Name': item.ProductName,
+                'Order Qty': item.OrderQty,
+                'Unit': item.UnitDescription,
+                'MRP': parseFloat(item.MRP || 0).toFixed(2),
+                'Remarks': item.Remarks
+            })));
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Orders");
+            XLSX.writeFile(wb, `Orders_${storeSelect.value}_${Date.now()}.xlsx`);
+            showNotification('Success', 'Orders exported to Excel.', 'success');
+        }
+
+        function exportToPDF() {
+            if (allData.length === 0) {
+                showNotification('Info', 'No data to export to PDF.', 'info');
+                return;
+            }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            const headers = [
+                ['S.No', 'Product Code', 'Product Name', 'Order Qty', 'Unit', 'MRP', 'Remarks']
+            ];
+
+            const data = allData.map(item => [
+                item.SerialNo,
+                item.ProductCode,
+                item.ProductName,
+                item.OrderQty,
+                item.UnitDescription || '',
+                parseFloat(item.MRP || 0).toFixed(2),
+                item.Remarks || ''
+            ]);
+
+            doc.autoTable({
+                head: headers,
+                body: data,
+                startY: 20,
+                headStyles: { fillColor: [62, 127, 230], textColor: 255 },
+                styles: { fontSize: 8, cellPadding: 2 },
+                columnStyles: {
+                    0: { cellWidth: 15 },
+                    1: { cellWidth: 25 },
+                    2: { cellWidth: 50 },
+                    3: { cellWidth: 20, halign: 'right' },
+                    4: { cellWidth: 15, halign: 'center' },
+                    5: { cellWidth: 20, halign: 'right' },
+                    6: { cellWidth: 40 }
+                },
+                didDrawPage: function(data) {
+                    doc.text("Order Details for " + storeSelect.value, 14, 15);
+                }
+            });
+
+            doc.save(`Orders_${storeSelect.value}_${Date.now()}.pdf`);
+            showNotification('Success', 'Orders exported to PDF.', 'success');
+        }
+
+        function exportToCSV() {
+            if (allData.length === 0) {
+                showNotification('Info', 'No data to export to CSV.', 'info');
+                return;
+            }
+
+            let csvContent = "S.No,Product Code,Product Name,Order Qty,Unit,MRP,Remarks\n";
+            allData.forEach(item => {
+                const row = [
+                    item.SerialNo,
+                    `"${item.ProductCode}"`, // Enclose in quotes to handle codes with commas
+                    `"${item.ProductName.replace(/"/g, '""')}"`, // Handle internal quotes
+                    item.OrderQty,
+                    `"${item.UnitDescription || ''}"`,
+                    parseFloat(item.MRP || 0).toFixed(2),
+                    `"${(item.Remarks || '').replace(/"/g, '""')}"`
+                ];
+                csvContent += row.join(",") + "\n";
+            });
+
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            if (link.download !== undefined) { // feature detection
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', `Orders_${storeSelect.value}_${Date.now()}.csv`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+            showNotification('Success', 'Orders exported to CSV.', 'success');
+        }
+
+        function exportToTXT() {
+            if (allData.length === 0) {
+                showNotification('Info', 'No data to export to TXT.', 'info');
+                return;
+            }
+
+            let txtContent = "";
+            allData.forEach(item => {
+                txtContent += `S.No: ${item.SerialNo}\n`;
+                txtContent += `Product Code: ${item.ProductCode}\n`;
+                txtContent += `Product Name: ${item.ProductName}\n`;
+                txtContent += `Order Qty: ${item.OrderQty}\n`;
+                txtContent += `Unit: ${item.UnitDescription || ''}\n`;
+                txtContent += `MRP: ${parseFloat(item.MRP || 0).toFixed(2)}\n`;
+                txtContent += `Remarks: ${item.Remarks || ''}\n`;
+                txtContent += `--------------------\n`;
+            });
+
+            const blob = new Blob([txtContent], { type: 'text/plain;charset=utf-8;' });
+            const link = document.createElement('a');
+            if (link.download !== undefined) {
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', `Orders_${storeSelect.value}_${Date.now()}.txt`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+            showNotification('Success', 'Orders exported to TXT.', 'success');
+        }
+
+        /**
+         * Exports the current table data to a JSON file with the format StoreName_SupplierCode.json.
+         */
+        function exportToJson() {
+            if (allData.length === 0) {
+                showNotification('Info', 'No data to export to JSON.', 'info');
+                return;
+            }
+
+            const storeName = storeSelect.value;
+            // The supplierCode is now available from the Jinja2 context
+            const supplierCode = "{{ supplier_code }}"; // Retrieve from Flask context
+            const fileName = `${storeName}_${supplierCode}.json`; 
+            
+            const jsonContent = JSON.stringify(allData, null, 2); // Pretty print JSON
+
+            const blob = new Blob([jsonContent], { type: 'application/json;charset=utf-8;' });
+            const link = document.createElement('a');
+            if (link.download !== undefined) {
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', fileName);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+            showNotification('Success', `Orders exported to ${fileName}.`, 'success');
+        }
 
 
         // Initialize the application when the DOM is fully loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            loadOrders(); // Load the first page of orders on dashboard load
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Fetch all stores first
+            try {
+                const storesResponse = await fetch('/get_store_headers'); 
+                const storesResult = await storesResponse.json();
+                if (storesResult.data) {
+                    populateStoreDropdown(storesResult.data);
+                } else {
+                    console.error('Failed to load store headers:', storesResult.error);
+                    showNotification('Error', 'Failed to load store list.', 'error');
+                }
+            } catch (error) {
+                console.error('Error fetching store headers:', error);
+                showNotification('Error', `Failed to fetch store list: ${error.message}`, 'error');
+            }
+            // loadOrders() is called after dropdown population in populateStoreDropdown()
         });
         {% endraw %}
     </script>

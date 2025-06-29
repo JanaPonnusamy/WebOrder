@@ -1,40 +1,5 @@
 ﻿[
   {
-    "StoreCode": "1",
-    "StoreName": "GUGAI",
-    "StoreFullName": "",
-    "Address1": "",
-    "Address2": ""
-  },
-  {
-    "StoreCode": "2",
-    "StoreName": "Four Roads",
-    "StoreFullName": "",
-    "Address1": "",
-    "Address2": ""
-  },
-  {
-    "StoreCode": "3",
-    "StoreName": "Agraharam",
-    "StoreFullName": "",
-    "Address1": "",
-    "Address2": ""
-  },
-  {
-    "StoreCode": "4",
-    "StoreName": "Chennai",
-    "StoreFullName": "",
-    "Address1": "",
-    "Address2": ""
-  },
-  {
-    "StoreCode": "5",
-    "StoreName": "Prithvi",
-    "StoreFullName": "",
-    "Address1": "",
-    "Address2": ""
-  },
-  {
     "StoreCode": "6",
     "StoreName": "NMS",
     "StoreFullName": "Nathan Medicals S",

@@ -19,5 +19,12 @@
     "suppliercode": "691",
     "suppliername": "THANTHAI PHARMA DISTRIBUTOR",
     "GSTNumber": "Test"
+  },
+  {
+    "username": "1391",
+    "password": "pass",
+    "suppliercode": "1391",
+    "suppliername": "THANTHAI PHARMA DISTRIBUTOR",
+    "GSTNumber": "Test"
   }
 ]

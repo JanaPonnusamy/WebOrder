@@ -5,5 +5,12 @@
     "suppliercode": "117",
     "suppliername": "NATHAN MEDICAL AGENCIES",
     "GSTNumber": "Test"
+  },
+  {
+    "username": "1391",
+    "password": "pass",
+    "suppliercode": "1391",
+    "suppliername": "THANTHAI PHARMA DISTRIBUTOR",
+    "GSTNumber": "Test"
   }
 ]

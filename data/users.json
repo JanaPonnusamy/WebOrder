@@ -47,5 +47,12 @@
     "suppliercode": "15",
     "suppliername": "SHRI AMBIGAI PHARMA & SURGICAL",
     "GSTNumber": "Test"
+  },
+  {
+    "username": "426",
+    "password": "pass",
+    "suppliercode": "426",
+    "suppliername": "PURANI HOSPITAL SUPPLIES PRIVATE LIMITED",
+    "GSTNumber": "Test"
   }
 ]

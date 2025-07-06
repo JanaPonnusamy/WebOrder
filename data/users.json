@@ -54,5 +54,12 @@
     "suppliercode": "426",
     "suppliername": "PURANI HOSPITAL SUPPLIES PRIVATE LIMITED",
     "GSTNumber": "Test"
+  },
+  {
+    "username": "120",
+    "password": "pass",
+    "suppliercode": "120",
+    "suppliername": "SHREE SHIVA SAKTHI MEDICAL AGENCIES",
+    "GSTNumber": "Test"
   }
 ]

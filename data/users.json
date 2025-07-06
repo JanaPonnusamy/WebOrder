@@ -33,5 +33,12 @@
     "suppliercode": "SMMAM",
     "suppliername": "SRI MURUGAN MEDICAL AGENCIES ERODE",
     "GSTNumber": "Test"
+  },
+  {
+    "username": "LOT",
+    "password": "pass",
+    "suppliercode": "LOT",
+    "suppliername": "LOTUS PHARMA DISTRIBUTORS",
+    "GSTNumber": "Test"
   }
 ]

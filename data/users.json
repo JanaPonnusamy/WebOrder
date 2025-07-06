@@ -19,5 +19,12 @@
     "suppliercode": "107,108,109,107,108,109",
     "suppliername": "SRI SARADHA MEDICAL AGENCIES",
     "GSTNumber": "Test"
+  },
+  {
+    "username": "PALEPU",
+    "password": "pass",
+    "suppliercode": "PALEPU",
+    "suppliername": "PALEPU PHARMA DISTRIBUTORS PVT LTD",
+    "GSTNumber": "Test"
   }
 ]

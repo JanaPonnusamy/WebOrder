@@ -26,5 +26,12 @@
     "suppliercode": "1012",
     "suppliername": "SRI SUN PHARMA",
     "GSTNumber": "Test"
+  },
+  {
+    "username": "SMMAM",
+    "password": "pass",
+    "suppliercode": "SMMAM",
+    "suppliername": "SRI MURUGAN MEDICAL AGENCIES ERODE",
+    "GSTNumber": "Test"
   }
 ]

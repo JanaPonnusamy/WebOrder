@@ -40,5 +40,12 @@
     "suppliercode": "LOT",
     "suppliername": "LOTUS PHARMA DISTRIBUTORS",
     "GSTNumber": "Test"
+  },
+  {
+    "username": "15",
+    "password": "pass",
+    "suppliercode": "15",
+    "suppliername": "SHRI AMBIGAI PHARMA & SURGICAL",
+    "GSTNumber": "Test"
   }
 ]

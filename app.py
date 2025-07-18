@@ -319,7 +319,7 @@ def update_orders():
                         # Aggregate for WhatsApp message
                         if order_id not in updates_for_whatsapp:
                             updates_for_whatsapp[order_id] = {'store_name': store_name, 'products': []}
-                        updates_for_whatsapp[oid]['products'].append(
+                        updates_for_whatsapp[order_id]['products'].append(
                             f"- {product_name}: Qty {old_qty} -> {new_qty}" + 
                             (f", Remarks: '{new_remarks}'" if new_remarks else "")
                         )

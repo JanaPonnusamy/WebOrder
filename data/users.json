@@ -61,5 +61,12 @@
     "suppliercode": "120",
     "suppliername": "SHREE SHIVA SAKTHI MEDICAL AGENCIES",
     "GSTNumber": "Test"
+  },
+  {
+    "username": "PALEPU",
+    "password": "pass",
+    "suppliercode": "PALEPU",
+    "suppliername": "PALEPU PHARMA  DISTRIBUTORS PVT LTD",
+    "GSTNumber": "Test"
   }
 ]

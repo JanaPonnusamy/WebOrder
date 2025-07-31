@@ -68,5 +68,12 @@
     "suppliercode": "PALEPU",
     "suppliername": "PALEPU PHARMA  DISTRIBUTORS PVT LTD",
     "GSTNumber": "Test"
+  },
+  {
+    "username": "99",
+    "password": "pass",
+    "suppliercode": "99",
+    "suppliername": "NATHAN MEDICALS C",
+    "GSTNumber": "Test"
   }
 ]

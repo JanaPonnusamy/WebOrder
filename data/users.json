@@ -1,86 +1,10 @@
 ﻿[
   {
-    "username": "117",
-    "password": "pass",
-    "suppliercode": "117",
-    "suppliername": "NATHAN MEDICAL AGENCIES",
-    "GSTNumber": "Test"
-  },
-  {
-    "username": "1391",
-    "password": "pass",
-    "suppliercode": "1391",
-    "suppliername": "THANTHAI PHARMA DISTRIBUTOR",
-    "GSTNumber": "Test"
-  },
-  {
-    "username": "107,108,109,107,108,109",
-    "password": "pass",
-    "suppliercode": "107,108,109,107,108,109",
-    "suppliername": "SRI SARADHA MEDICAL AGENCIES",
-    "GSTNumber": "Test"
-  },
-  {
-    "username": "1012",
-    "password": "pass",
-    "suppliercode": "1012",
-    "suppliername": "SRI SUN PHARMA",
-    "GSTNumber": "Test"
-  },
-  {
-    "username": "SMMAM",
-    "password": "pass",
-    "suppliercode": "SMMAM",
-    "suppliername": "SRI MURUGAN MEDICAL AGENCIES ERODE",
-    "GSTNumber": "Test"
-  },
-  {
-    "username": "LOT",
-    "password": "pass",
-    "suppliercode": "LOT",
-    "suppliername": "LOTUS PHARMA DISTRIBUTORS",
-    "GSTNumber": "Test"
-  },
-  {
-    "username": "15",
-    "password": "pass",
-    "suppliercode": "15",
-    "suppliername": "SHRI AMBIGAI PHARMA & SURGICAL",
-    "GSTNumber": "Test"
-  },
-  {
-    "username": "426",
-    "password": "pass",
-    "suppliercode": "426",
-    "suppliername": "PURANI HOSPITAL SUPPLIES PVT LTD ERODE",
-    "GSTNumber": "Test"
-  },
-  {
-    "username": "120",
-    "password": "pass",
-    "suppliercode": "120",
-    "suppliername": "SHREE SHIVA SAKTHI MEDICAL AGENCIES",
-    "GSTNumber": "Test"
-  },
-  {
-    "username": "PALEPU",
-    "password": "pass",
-    "suppliercode": "PALEPU",
-    "suppliername": "PALEPU PHARMA  DISTRIBUTORS PVT LTD",
-    "GSTNumber": "Test"
-  },
-  {
-    "username": "99",
-    "password": "pass",
-    "suppliercode": "99",
-    "suppliername": "NATHAN MEDICALS C",
-    "GSTNumber": "Test"
-  },
-  {
     "username": "754",
     "password": "pass",
     "suppliercode": "754",
     "suppliername": "THANTHAI PHARMA DISTRIBUTOR",
-    "GSTNumber": "Test"
+    "GSTNumber": "Test",
+    "StoreName": "NMA"
   }
 ]

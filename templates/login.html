@@ -6,256 +6,150 @@
     <title>Pharmacy Order Management</title>
     <!-- Include Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Font -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', 'Arial', sans-serif;
-        }
-        
         body {
+            font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #2c3e50, #4ca1af);
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             overflow: hidden;
-            position: relative;
         }
-        
-        body::before {
-            content: '';
-            position: absolute;
-            width: 200%;
-            height: 200%;
-            top: -50%;
-            left: -50%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 10%, transparent 10.5%), 
-                        radial-gradient(circle, rgba(255,255,255,0.1) 10%, transparent 10.5%);
-            background-size: 50px 50px, 100px 100px;
-            animation: move-background 60s linear infinite;
-        }
-        
-        @keyframes move-background {
-            from { transform: translate(0, 0); }
-            to { transform: translate(50px, 50px); }
-        }
-
-        .login-container {
-            background-color: rgba(255, 255, 255, 0.95);
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            text-align: center;
+        .login-card {
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 1rem;
+            padding: 2.5rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
             width: 100%;
             max-width: 400px;
-            position: relative;
-            z-index: 10;
-            transform: translateY(0);
-            transition: transform 0.3s ease-in-out;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(5px); /* Frosted glass effect */
+            text-align: center;
         }
-        
-        .login-container:hover {
-            transform: translateY(-5px);
-        }
-
-        .login-container h2 {
-            margin-bottom: 30px;
-            color: #333;
-            font-size: 28px;
-            position: relative;
-            padding-bottom: 10px;
-        }
-        
-        .login-container h2::after {
-            content: '';
-            position: absolute;
-            left: 50%;
-            bottom: 0;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 3px;
-            background-color: #4CAF50; /* A fresh green for the underline */
-            border-radius: 2px;
-        }
-
         .input-group {
-            margin-bottom: 20px;
-            text-align: left;
             position: relative;
+            margin-bottom: 1.5rem;
         }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #555;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .input-group input {
+        .input-group input, .input-group select {
             width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
+            padding: 0.75rem 0.75rem 0.75rem 2.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            transition: all 0.2s ease;
+            background-color: #f9fafb;
         }
-
-        .input-group input:focus {
-            border-color: #4CAF50; /* Green focus border */
+        .input-group input:focus, .input-group select:focus {
             outline: none;
-            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2); /* Soft green glow */
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
         }
-        
-        .input-group i {
+        .input-group .icon {
             position: absolute;
-            right: 15px;
+            left: 1rem;
             top: 50%;
             transform: translateY(-50%);
-            color: #aaa;
-            font-size: 18px;
-            transition: color 0.3s ease;
+            color: #9ca3af;
         }
-        
-        .input-group input:focus + i {
-            color: #4CAF50; /* Green icon on focus */
-        }
-
-        .login-btn {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(90deg, #4CAF50, #8bc34a); /* Green gradient */
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            letter-spacing: 0.5px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .login-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.2);
-            transition: all 0.4s ease;
-            transform: skewX(-20deg);
-        }
-
-        .login-btn:hover::before {
-            left: 100%;
-        }
-
-        .login-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-            background: linear-gradient(90deg, #8bc34a, #4CAF50);
-        }
-        
         .error {
-            color: #e74c3c;
-            background-color: #fce4e4;
-            border: 1px solid #e74c3c;
-            padding: 10px;
-            border-radius: 8px;
-            margin-top: 20px;
-            display: none;
+            color: #ef4444;
+            font-size: 0.875rem;
+            height: 1.5rem;
+            visibility: hidden;
             opacity: 0;
-            transition: opacity 0.5s ease-in-out;
-            font-size: 14px;
+            transition: opacity 0.3s ease;
         }
-        
         .error.show {
-            display: block;
+            visibility: visible;
             opacity: 1;
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <h2>Login</h2>
-        {% if error %}
-            <div class="error show">{{ error }}</div>
-        {% endif %}
-        <!-- ACTION IS THE KEY FIX HERE -->
-        <form id="loginForm" method="post" action="/login"> 
+    <div class="login-card">
+        <div class="mb-6">
+            <h1 class="text-3xl font-bold text-gray-800">Welcome Back</h1>
+            <p class="text-gray-500 text-sm mt-2">Sign in to your account</p>
+        </div>
+        <form id="loginForm" method="post" action="/login">
             <div class="input-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" placeholder="Enter your username" required>
-                <i class="fas fa-user"></i>
+                <i class="fas fa-building icon"></i>
+                <select id="storename" name="storename" class="w-full text-gray-700" required>
+                    <!-- Options will be populated by JavaScript -->
+                    <option value="" disabled selected>Select a Store</option>
+                </select>
             </div>
             <div class="input-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="Enter your password" required>
-                <i class="fas fa-lock"></i>
+                <i class="fas fa-user icon"></i>
+                <input type="text" id="username" name="username" placeholder="Username" required class="text-gray-700">
             </div>
-            <button type="submit" class="login-btn">Login</button>
+            <div class="input-group">
+                <i class="fas fa-lock icon"></i>
+                <input type="password" id="password" name="password" placeholder="Password" required class="text-gray-700">
+            </div>
+            <div class="error text-left" id="errorMessage"></div>
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                Log In
+            </button>
         </form>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async () => {
             const loginForm = document.getElementById('loginForm');
-            const loginBtn = document.querySelector('.login-btn');
-            
-            // Icon animation on hover
-            loginBtn.addEventListener('mouseenter', function() {
-                const icon = this.querySelector('i');
-                if (icon) {
-                    icon.style.transform = 'translateY(-50%) rotate(360deg)';
-                }
-            });
-            
-            loginBtn.addEventListener('mouseleave', function() {
-                const icon = this.querySelector('i');
-                if (icon) {
-                    icon.style.transform = 'translateY(-50%)';
-                }
-            });
-            
-            loginForm.addEventListener('submit', function(e) {
-                const username = document.getElementById('username').value;
-                const password = document.getElementById('password').value;
-                
-                // Basic validation (in a real app, this would be handled by the server)
-                if (username.trim() === '') {
-                    showError('Please enter your username');
-                    e.preventDefault();
-                    return;
-                }
-                
-                if (password.trim() === '') {
-                    showError('Please enter your password');
-                    e.preventDefault();
-                    return;
-                }
-            });
-            
+            const storeSelect = document.getElementById('storename');
+            const errorMessage = document.getElementById('errorMessage');
+
+            // Function to show error message
             function showError(message) {
-                const errorDiv = document.querySelector('.error');
-                if (errorDiv) {
-                    errorDiv.textContent = message;
-                    errorDiv.classList.add('show');
-                    
-                    // Hide error after 3 seconds
-                    setTimeout(() => {
-                        errorDiv.classList.remove('show');
-                    }, 3000);
-                }
+                errorMessage.textContent = message;
+                errorMessage.classList.add('show');
+                setTimeout(() => {
+                    errorMessage.classList.remove('show');
+                }, 5000);
             }
+
+            // Fetch store headers to populate the dropdown
+            try {
+                const response = await fetch('/get_store_headers');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch store data');
+                }
+                const result = await response.json();
+                if (result.data) {
+                    result.data.forEach(store => {
+                        const option = document.createElement('option');
+                        option.value = store.StoreName;
+                        option.textContent = store.StoreFullName || store.StoreName;
+                        storeSelect.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Error fetching store headers:', error);
+                showError('Could not load store list. Please try again.');
+            }
+
+            // Handle form submission
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const formData = new FormData(loginForm);
+                const response = await fetch(loginForm.action, {
+                    method: 'POST',
+                    body: new URLSearchParams(formData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    window.location.href = result.redirect_url;
+                } else {
+                    showError(result.error);
+                }
+            });
         });
     </script>
 </body>

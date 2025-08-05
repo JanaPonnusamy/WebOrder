@@ -75,5 +75,12 @@
     "suppliercode": "99",
     "suppliername": "NATHAN MEDICALS C",
     "GSTNumber": "Test"
+  },
+  {
+    "username": "754",
+    "password": "pass",
+    "suppliercode": "754",
+    "suppliername": "THANTHAI PHARMA DISTRIBUTOR",
+    "GSTNumber": "Test"
   }
 ]

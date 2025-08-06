@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Supplier Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f0f2f5;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    .header {
+      background: linear-gradient(to right, #6a11cb, #2575fc);
+      padding: 20px;
+      border-radius: 10px;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      flex-direction: column;
+      text-align: center;
+    }
+    .header h2 {
+      margin: 0;
+    }
+    .header .details {
+      font-size: 13px;
+      margin-top: 5px;
+    }
+    table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      font-size: 14px;
+      text-align: left;
+    }
+    th {
+      background: #f3f4f6;
+    }
+    input[type="number"] {
+      width: 60px;
+    }
+    .available {
+      color: green;
+    }
+    .not-available {
+      color: red;
+    }
+    .btn-save {
+      margin-top: 20px;
+      background: #007bff;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .btn-save:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h2 id="supplierName">Supplier</h2>
+    <div class="details">
+      (Mobile: <span id="mobile"></span> | GST: <span id="gst"></span>)
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>S.No</th>
+        <th>Product Name</th>
+        <th>Order Qty</th>
+        <th>Pack</th>
+        <th>MRP</th>
+        <th>Remarks</th>
+      </tr>
+    </thead>
+    <tbody id="orderTableBody"></tbody>
+  </table>
+
+  <button class="btn-save" onclick="saveChanges()">Save Changes</button>
+
+  <script>
+    const storeName = '{{ store_name }}';
+    const supplierCode = '{{ supplier_code }}';
+    const supplierName = '{{ supplier_name }}';
+
+    document.getElementById('supplierName').innerText = supplierName;
+
+    async function loadStoreFullName() {
+      // optional: remove if not used in new layout
+    }
+
+    async function loadSupplierDetails() {
+      const res = await fetch('/get_supplier_info');
+      const data = await res.json();
+      const supplier = data.find(s => s.suppliercode === supplierCode && s.StoreName === storeName);
+      if (supplier) {
+        document.getElementById('mobile').innerText = supplier.MobileNumber || 'N/A';
+        document.getElementById('gst').innerText = supplier.GSTNumber || 'N/A';
+      }
+    }
+
+    let orders = [];
+
+    async function loadOrders() {
+      const res = await fetch(`/get_orders/${storeName}/${supplierCode}`);
+      const result = await res.json();
+      if (result.success) {
+        orders = result.data;
+        const tbody = document.getElementById('orderTableBody');
+        tbody.innerHTML = '';
+        orders.forEach((item, i) => {
+          const tr = document.createElement('tr');
+          const originalQty = parseInt(item.OrderQty);
+
+          tr.innerHTML = `
+            <td>${i + 1}</td>
+            <td>${item.ProductName}</td>
+            <td><input type="number" value="${item.OrderQty}" data-index="${i}" onchange="updateRemarks(this)"></td>
+            <td>${item.Pack}</td>
+            <td>${item.MRP}</td>
+            <td class="remarks available">Available ✅</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+    }
+
+    function updateRemarks(input) {
+      const index = input.dataset.index;
+      const row = input.closest('tr');
+      const cell = row.querySelector('.remarks');
+      const newQty = parseInt(input.value);
+      const oldQty = parseInt(orders[index].OrderQty);
+
+      if (newQty === 0) {
+        cell.innerText = 'Not Available ❌';
+        cell.className = 'remarks not-available';
+      } else if (newQty > oldQty) {
+        cell.innerText = `Available ✅ (+${newQty - oldQty})`;
+        cell.className = 'remarks available';
+      } else if (newQty < oldQty) {
+        cell.innerText = `Available ✅ (-${oldQty - newQty})`;
+        cell.className = 'remarks available';
+      } else {
+        cell.innerText = 'Available ✅';
+        cell.className = 'remarks available';
+      }
+    }
+
+    function saveChanges() {
+      alert("Save functionality to be implemented.");
+    }
+
+    loadSupplierDetails();
+    loadOrders();
+  </script>
+</body>
+</html>

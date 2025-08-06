@@ -1,262 +1,272 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Retail Orders Dashboard</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <!-- Google Font -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f1f5f9; /* Tailwind's gray-100 */
-        }
-        .sidebar {
-            background-color: #1e293b; /* Tailwind's slate-800 */
-            width: 250px;
-            transition: transform 0.3s ease-in-out;
-            transform: translateX(0);
-        }
-        .sidebar.closed {
-            transform: translateX(-250px);
-        }
-        @media (max-width: 768px) {
-            .sidebar {
-                position: fixed;
-                height: 100vh;
-                z-index: 50;
-            }
-            .sidebar.closed {
-                transform: translateX(-250px);
-            }
-        }
-        .content {
-            flex-grow: 1;
-            transition: margin-left 0.3s ease-in-out;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Supplier Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f0f2f5;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    .header {
+      background: linear-gradient(to right, #6a11cb, #2575fc);
+      padding: 20px;
+      border-radius: 10px;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      align-items: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+    .header .info-block {
+      font-size: 13px;
+      margin-top: 5px;
+      min-width: 200px;
+    }
+    table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+      background: white;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 6px;
+      font-size: 13px;
+      text-align: left;
+    }
+    th {
+      background: #f3f4f6;
+    }
+    th:nth-child(1), td:nth-child(1),
+    th:nth-child(3), td:nth-child(3) {
+      width: 50px;
+    }
+    td:nth-child(5), th:nth-child(5) {
+      width: 60px;
+      text-align: right;
+    }
+    td:nth-child(4), th:nth-child(4) {
+      width: 60px;
+      text-align: right;
+    }
+    input[type="number"] {
+      width: 50px;
+    }
+    .available {
+      color: green;
+    }
+    .not-available {
+      color: red;
+    }
+    .btn-save, .btn-download {
+      margin-top: 20px;
+      background: #007bff;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    .btn-save:hover, .btn-download:hover {
+      background: #0056b3;
+    }
+    .pagination {
+      margin-top: 15px;
+      text-align: center;
+    }
+    .pagination button {
+      padding: 6px 12px;
+      margin: 0 4px;
+      background: #eee;
+      border: 1px solid #ccc;
+      cursor: pointer;
+    }
+    .pagination button.active {
+      background: #007bff;
+      color: white;
+    }
+  </style>
 </head>
-<body class="flex min-h-screen">
-
-    <!-- Sidebar -->
-    <aside id="sidebar" class="sidebar text-white p-4 flex flex-col h-full md:h-screen sticky top-0">
-        <div class="mb-8 text-center">
-            <h1 class="text-2xl font-bold">RetailOrders</h1>
-        </div>
-        <nav class="flex-grow">
-            <ul>
-                <li class="mb-2">
-                    <a href="#" class="flex items-center p-3 rounded-lg hover:bg-slate-700 transition-colors duration-200">
-                        <i class="fas fa-home mr-3"></i> Home
-                    </a>
-                </li>
-                <li class="mb-2">
-                    <a href="#" class="flex items-center p-3 rounded-lg hover:bg-slate-700 transition-colors duration-200 bg-slate-700">
-                        <i class="fas fa-shopping-cart mr-3"></i> Orders
-                    </a>
-                </li>
-                <li class="mb-2">
-                    <a href="#" class="flex items-center p-3 rounded-lg hover:bg-slate-700 transition-colors duration-200">
-                        <i class="fas fa-users mr-3"></i> Suppliers
-                    </a>
-                </li>
-                <li class="mb-2">
-                    <a href="#" class="flex items-center p-3 rounded-lg hover:bg-slate-700 transition-colors duration-200">
-                        <i class="fas fa-box mr-3"></i> Products
-                    </a>
-                </li>
-            </ul>
-        </nav>
-        <div class="mt-auto">
-            <a href="/logout" class="flex items-center p-3 rounded-lg hover:bg-slate-700 transition-colors duration-200">
-                <i class="fas fa-sign-out-alt mr-3"></i> Logout
-            </a>
-        </div>
-    </aside>
-
-    <!-- Main content area -->
-    <div class="content flex-grow p-8">
-        <!-- Header -->
-        <header class="flex justify-between items-center mb-6">
-            <h2 class="text-3xl font-bold text-gray-800">Order Management</h2>
-            <button id="sidebar-toggle" class="md:hidden text-gray-600 hover:text-gray-800">
-                <i class="fas fa-bars text-2xl"></i>
-            </button>
-        </header>
-
-        <!-- Main Card -->
-        <div class="bg-white rounded-lg shadow-xl p-6">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
-                <div class="flex items-center space-x-4 mb-4 md:mb-0">
-                    <h3 class="text-xl font-semibold text-gray-700">Orders for <span id="storeNameDisplay" class="text-blue-600">Loading...</span></h3>
-                </div>
-                <div class="flex items-center space-x-2">
-                    <button id="exportExcel" class="flex items-center bg-green-500 text-white font-semibold py-2 px-4 rounded-full shadow hover:bg-green-600 transition-colors duration-200">
-                        <i class="fas fa-file-excel mr-2"></i> Export Excel
-                    </button>
-                    <button id="exportPDF" class="flex items-center bg-red-500 text-white font-semibold py-2 px-4 rounded-full shadow hover:bg-red-600 transition-colors duration-200">
-                        <i class="fas fa-file-pdf mr-2"></i> Export PDF
-                    </button>
-                </div>
-            </div>
-
-            <!-- Orders Table -->
-            <div class="overflow-x-auto rounded-lg shadow-md mt-6">
-                <table class="min-w-full bg-white">
-                    <thead class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-                        <tr>
-                            <th class="py-3 px-6 text-left">Supplier Code</th>
-                            <th class="py-3 px-6 text-left">Supplier Name</th>
-                            <th class="py-3 px-6 text-left">Order Details</th>
-                        </tr>
-                    </thead>
-                    <tbody id="ordersTableBody" class="text-gray-600 text-sm font-light">
-                        <!-- Orders will be loaded here dynamically -->
-                        <tr>
-                            <td colspan="3" class="text-center py-4">Loading orders...</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            
-            <!-- Message/Notification Box -->
-            <div id="notification-box" class="fixed bottom-4 right-4 bg-white border border-gray-200 rounded-lg shadow-lg p-4 max-w-sm hidden">
-                <div class="flex justify-between items-center">
-                    <span id="notification-title" class="font-bold text-lg"></span>
-                    <button onclick="document.getElementById('notification-box').classList.add('hidden')" class="text-gray-400 hover:text-gray-600">&times;</button>
-                </div>
-                <p id="notification-message" class="text-gray-600 mt-2"></p>
-            </div>
-            
-        </div>
+<body>
+  <div class="header">
+    <div class="info-block">
+      <strong>Store:</strong> <span id="storeFullName"></span><br>
+      <small id="storeAddress"></small>
     </div>
+    <div class="info-block">
+      <strong id="supplierName">Supplier</strong><br>
+      <small>(Mobile: <span id="mobile"></span> | GST: <span id="gst"></span>)</small>
+    </div>
+  </div>
 
-    <!-- Scripts for data fetching and interactivity -->
-    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
-    <script src="https://unpkg.com/jspdf@latest/dist/jspdf.umd.min.js"></script>
-    <script src="https://unpkg.com/jspdf-autotable@3.5.16/dist/jspdf.plugin.autotable.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const sidebar = document.getElementById('sidebar');
-            const sidebarToggle = document.getElementById('sidebar-toggle');
-            const ordersTableBody = document.getElementById('ordersTableBody');
-            const storeNameDisplay = document.getElementById('storeNameDisplay');
-            const exportExcelBtn = document.getElementById('exportExcel');
-            const exportPDFBtn = document.getElementById('exportPDF');
+  <table>
+    <thead>
+      <tr>
+        <th>S.No</th>
+        <th>Product Name</th>
+        <th>Order Qty</th>
+        <th>Pack</th>
+        <th>MRP</th>
+        <th>Remarks</th>
+      </tr>
+    </thead>
+    <tbody id="orderTableBody"></tbody>
+  </table>
 
-            // Sidebar toggle for mobile
-            sidebarToggle.addEventListener('click', () => {
-                sidebar.classList.toggle('closed');
-            });
-            
-            // Fetch orders from the backend
-            async function fetchOrders() {
-                ordersTableBody.innerHTML = '<tr><td colspan="3" class="text-center py-4">Loading orders...</td></tr>';
-                try {
-                    const response = await fetch('/get_orders');
-                    if (!response.ok) {
-                        throw new Error('Failed to fetch orders');
-                    }
-                    const result = await response.json();
-                    
-                    // Display store name from session (hardcoded for example)
-                    // In a real app, this would be passed from the server
-                    const urlParams = new URLSearchParams(window.location.search);
-                    storeNameDisplay.textContent = urlParams.get('storename') || "NMS";
+  <div class="pagination" id="pagination"></div>
 
-                    if (result.data && result.data.length > 0) {
-                        renderOrders(result.data);
-                    } else {
-                        ordersTableBody.innerHTML = '<tr><td colspan="3" class="text-center py-4 text-gray-500">No orders found.</td></tr>';
-                    }
-                } catch (error) {
-                    console.error('Error fetching orders:', error);
-                    ordersTableBody.innerHTML = `<tr><td colspan="3" class="text-center py-4 text-red-500">Error loading orders: ${error.message}</td></tr>`;
-                }
-            }
+  <button class="btn-save" onclick="saveChanges()">Save Changes</button>
+  <button class="btn-download" onclick="downloadExcel()">Download Excel</button>
+  <button class="btn-download" onclick="downloadPDF()">Download PDF</button>
 
-            // Render orders into the table
-            function renderOrders(orders) {
-                ordersTableBody.innerHTML = '';
-                orders.forEach(order => {
-                    const row = document.createElement('tr');
-                    row.className = 'border-b border-gray-200 hover:bg-gray-100';
-                    row.innerHTML = `
-                        <td class="py-3 px-6 text-left whitespace-nowrap">${order.suppliercode}</td>
-                        <td class="py-3 px-6 text-left">${order.Suppliername}</td>
-                        <td class="py-3 px-6 text-left">${order.order_details}</td>
-                    `;
-                    ordersTableBody.appendChild(row);
-                });
-            }
+  <script>
+    const storeName = '{{ store_name }}';
+    const supplierCode = '{{ supplier_code }}';
+    const supplierName = '{{ supplier_name }}';
+    const rowsPerPage = 20;
+    let currentPage = 1;
+    let orders = [];
 
-            // Show a notification
-            function showNotification(title, message, type) {
-                const notificationBox = document.getElementById('notification-box');
-                const notificationTitle = document.getElementById('notification-title');
-                const notificationMessage = document.getElementById('notification-message');
-                
-                notificationTitle.textContent = title;
-                notificationMessage.textContent = message;
-                
-                // Set colors based on type
-                if (type === 'success') {
-                    notificationTitle.className = 'font-bold text-lg text-green-600';
-                } else if (type === 'error') {
-                    notificationTitle.className = 'font-bold text-lg text-red-600';
-                }
+    document.getElementById('supplierName').innerText = supplierName;
 
-                notificationBox.classList.remove('hidden');
-                setTimeout(() => {
-                    notificationBox.classList.add('hidden');
-                }, 5000);
-            }
-            
-            // Export to Excel
-            exportExcelBtn.addEventListener('click', () => {
-                const data = Array.from(ordersTableBody.querySelectorAll('tr')).map(row => 
-                    Array.from(row.querySelectorAll('td')).map(cell => cell.textContent.trim())
-                );
-                
-                if (data.length > 0 && data[0].length > 1) {
-                    const ws = XLSX.utils.aoa_to_sheet([['Supplier Code', 'Supplier Name', 'Order Details'], ...data]);
-                    const wb = XLSX.utils.book_new();
-                    XLSX.utils.book_append_sheet(wb, ws, "Orders");
-                    XLSX.writeFile(wb, "orders.xlsx");
-                    showNotification('Success', 'Orders exported to Excel.', 'success');
-                } else {
-                    showNotification('Error', 'No data to export.', 'error');
-                }
-            });
+    async function loadSupplierDetails() {
+      const res = await fetch('/get_supplier_info');
+      const data = await res.json();
+      const supplier = data.find(s => s.suppliercode === supplierCode && s.StoreName === storeName);
+      if (supplier) {
+        document.getElementById('mobile').innerText = supplier.MobileNumber || 'N/A';
+        document.getElementById('gst').innerText = supplier.GSTNumber || 'N/A';
+      }
+    }
 
-            // Export to PDF
-            exportPDFBtn.addEventListener('click', () => {
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF();
-                
-                const tableData = Array.from(ordersTableBody.querySelectorAll('tr')).map(row => 
-                    Array.from(row.querySelectorAll('td')).map(cell => cell.textContent.trim())
-                );
-                
-                if (tableData.length > 0 && tableData[0].length > 1) {
-                    doc.autoTable({
-                        head: [['Supplier Code', 'Supplier Name', 'Order Details']],
-                        body: tableData,
-                    });
-                    doc.save('orders.pdf');
-                    showNotification('Success', 'Orders exported to PDF.', 'success');
-                } else {
-                    showNotification('Error', 'No data to export.', 'error');
-                }
-            });
+    async function loadStoreDetails() {
+      const res = await fetch('/get_store_headers');
+      const data = await res.json();
+      const store = data.find(s => s.StoreName === storeName);
+      if (store) {
+        document.getElementById('storeFullName').innerText = store.StoreFullName;
+        document.getElementById('storeAddress').innerText = store.Address1 + ", " + store.Address2;
+      }
+    }
 
-            // Initial fetch of orders
-            fetchOrders();
-        });
-    </script>
+    async function loadOrders() {
+      const res = await fetch(`/get_orders/${storeName}/${supplierCode}`);
+      const result = await res.json();
+      if (result.success) {
+        orders = result.data;
+        renderPage();
+      }
+    }
+
+    function renderPage() {
+      const tbody = document.getElementById('orderTableBody');
+      tbody.innerHTML = '';
+      const start = (currentPage - 1) * rowsPerPage;
+      const end = Math.min(start + rowsPerPage, orders.length);
+
+      for (let i = start; i < end; i++) {
+        const item = orders[i];
+        const tr = document.createElement('tr');
+        const mrp = parseFloat(item.MRP || 0).toFixed(2);
+
+        tr.innerHTML = `
+          <td>${i + 1}</td>
+          <td>${item.ProductName}</td>
+          <td><input type="number" value="${item.OrderQty}" data-index="${i}" onchange="updateRemarks(this)"></td>
+          <td>${item.Pack}</td>
+          <td>${mrp}</td>
+          <td class="remarks available">Available ✅</td>
+        `;
+        tbody.appendChild(tr);
+      }
+
+      renderPagination();
+    }
+
+    function renderPagination() {
+      const pageCount = Math.ceil(orders.length / rowsPerPage);
+      const container = document.getElementById('pagination');
+      container.innerHTML = '';
+
+      for (let i = 1; i <= pageCount; i++) {
+        const btn = document.createElement('button');
+        btn.textContent = i;
+        btn.className = (i === currentPage) ? 'active' : '';
+        btn.onclick = () => {
+          currentPage = i;
+          renderPage();
+        };
+        container.appendChild(btn);
+      }
+    }
+
+    function updateRemarks(input) {
+      const index = input.dataset.index;
+      const row = input.closest('tr');
+      const cell = row.querySelector('.remarks');
+      const newQty = parseInt(input.value);
+      const oldQty = parseInt(orders[index].OrderQty);
+
+      if (newQty === 0) {
+        cell.innerText = 'Not Available ❌';
+        cell.className = 'remarks not-available';
+      } else if (newQty > oldQty) {
+        cell.innerText = `Available ✅ (+${newQty - oldQty})`;
+        cell.className = 'remarks available';
+      } else if (newQty < oldQty) {
+        cell.innerText = `Available ✅ (-${oldQty - newQty})`;
+        cell.className = 'remarks available';
+      } else {
+        cell.innerText = 'Available ✅';
+        cell.className = 'remarks available';
+      }
+
+      orders[index].OrderQty = newQty;
+    }
+
+    function saveChanges() {
+      alert("Changes saved (mock). Implement actual backend call here.");
+    }
+
+    function downloadExcel() {
+      saveChanges();
+      const ws = XLSX.utils.json_to_sheet(orders);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Orders");
+      XLSX.writeFile(wb, `Order_${storeName}_${supplierCode}.xlsx`);
+    }
+
+    function downloadPDF() {
+      saveChanges();
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      doc.text(`Order List - ${storeName}`, 10, 10);
+      let y = 20;
+      orders.forEach((o, i) => {
+        doc.text(`${i + 1}. ${o.ProductName} - ${o.OrderQty} x ${o.Pack} - ₹${parseFloat(o.MRP).toFixed(2)}`, 10, y);
+        y += 8;
+        if (y > 280) {
+          doc.addPage();
+          y = 20;
+        }
+      });
+      doc.save(`Order_${storeName}_${supplierCode}.pdf`);
+    }
+
+    loadStoreDetails();
+    loadSupplierDetails();
+    loadOrders();
+  </script>
 </body>
 </html>

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nathan Medicals - Order Management</title>
-    <!-- Font Awesome -->
+    <!-- Include Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -17,11 +17,12 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #1a202c;
+            background-color: #1a202c; /* Dark background */
             background-image: linear-gradient(135deg, #1f2937 0%, #0f172a 100%);
             color: #e5e7eb;
             overflow: hidden;
         }
+
         .main-container {
             display: flex;
             flex-direction: row;
@@ -31,12 +32,14 @@
             max-width: 1200px;
             padding: 2rem;
         }
+        
         .intro-panel {
             flex: 1;
             padding: 2rem;
             text-align: left;
             animation: slideInLeft 1s ease-out;
         }
+
         .login-panel {
             flex: 1;
             max-width: 450px;
@@ -47,6 +50,7 @@
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
             animation: fadeInRight 1s ease-out;
         }
+
         .intro-panel h1 {
             font-size: 4rem;
             font-weight: 900;
@@ -55,11 +59,13 @@
             margin-bottom: 1rem;
             text-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
         }
+
         .intro-panel p {
             font-size: 1.125rem;
             line-height: 1.6;
             color: #d1d5db;
         }
+
         .form-group {
             position: relative;
             margin-bottom: 1.5rem;
@@ -144,6 +150,8 @@
             from { opacity: 0; transform: translateX(50px); }
             to { opacity: 1; transform: translateX(0); }
         }
+
+        /* Responsive adjustments */
         @media (max-width: 768px) {
             .main-container {
                 flex-direction: column;
@@ -173,6 +181,7 @@
                 <img src="https://placehold.co/100x100/FCD34D/ffffff?text=Trust" alt="Trust Icon" class="rounded-full shadow-lg">
             </div>
         </div>
+
         <div class="login-panel">
             <div class="text-center mb-6">
                 <div class="tabs">
@@ -180,27 +189,29 @@
                     <div class="tab" data-tab="supplier-login">Supplier Login</div>
                 </div>
             </div>
+
             <!-- Store Login Form -->
-            <form id="storeLoginForm" autocomplete="off">
+            <form action="/login" method="post" id="storeLoginForm">
                 <div id="store-login-form-container">
                     <div class="form-group">
-                        <select id="storename" name="storename" class="block w-full text-sm" required>
-                            <option value="" disabled selected>Select Store</option>
+                        <select id="concernName" name="concernName" class="block w-full text-sm">
+                            <option value="" disabled selected></option>
                         </select>
-                        <label for="storename">Store Or Branch Name</label>
+                        <label for="concernName">Store Or Branch Name</label>
                         <i class="fa-solid fa-building input-icon"></i>
                     </div>
                     <div class="form-group">
-                        <input type="text" id="username" name="username" placeholder=" " class="block w-full text-sm" required>
+                        <input type="text" id="username" name="username" placeholder=" " class="block w-full text-sm">
                         <label for="username">Username</label>
                         <i class="fa-solid fa-user input-icon"></i>
                     </div>
                     <div class="form-group">
-                        <input type="password" id="password" name="password" placeholder=" " class="block w-full text-sm" required>
+                        <input type="password" id="password" name="password" placeholder=" " class="block w-full text-sm">
                         <label for="password">Password</label>
                         <i class="fa-solid fa-eye input-icon" id="togglePassword"></i>
                     </div>
                 </div>
+                
                 <div class="flex justify-between items-center mb-6 text-sm">
                     <div class="flex items-center">
                         <input type="checkbox" id="rememberMe" name="rememberMe" class="h-4 w-4 text-indigo-600 rounded">
@@ -208,29 +219,37 @@
                     </div>
                     <a href="#" class="text-indigo-400 hover:text-indigo-300 transition-colors">Change Password?</a>
                 </div>
+
                 <button type="submit" class="w-full text-white font-semibold py-3 px-4 rounded-full text-lg btn-primary">
                     Login
                 </button>
             </form>
+
             <!-- Supplier Login Form (Placeholder) -->
-            <form id="supplierLoginForm" class="hidden">
+            <form action="/supplier-login" method="post" id="supplierLoginForm" class="hidden">
                 <p class="text-center text-gray-400">Supplier login functionality is under development.</p>
                 <button type="button" class="w-full text-white font-semibold py-3 px-4 rounded-full text-lg bg-gray-500 mt-4 cursor-not-allowed">
                     Coming Soon
                 </button>
             </form>
+
             <div class="mt-6 text-center text-gray-500 text-sm">
                 <p>Thanks and regards.</p>
                 <p>For any queries, contact our technical team.</p>
             </div>
         </div>
     </div>
+    
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
-            // Tab switching logic
             const storeLoginForm = document.getElementById('storeLoginForm');
             const supplierLoginForm = document.getElementById('supplierLoginForm');
             const tabs = document.querySelectorAll('.tab');
+            const togglePassword = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('password');
+            const concernNameSelect = document.getElementById('concernName');
+            
+            // Function to handle tab switching
             tabs.forEach(tab => {
                 tab.addEventListener('click', () => {
                     tabs.forEach(t => t.classList.remove('active'));
@@ -245,60 +264,80 @@
                 });
             });
 
-            // Password show/hide
-            const togglePassword = document.getElementById('togglePassword');
-            const passwordInput = document.getElementById('password');
+            // Function to toggle password visibility
             togglePassword.addEventListener('click', () => {
                 const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
                 passwordInput.setAttribute('type', type);
                 togglePassword.classList.toggle('fa-eye');
                 togglePassword.classList.toggle('fa-eye-slash');
             });
-
-            // Fetch store headers from backend and populate store select
-const storenameSelect = document.getElementById('storename');
-async function fetchStores() {
-    try {
-        const response = await fetch('/get_store_headers');
-        const result = await response.json();
-        storenameSelect.innerHTML = '<option value="" disabled selected>Select Store</option>';
-        if (result.success && Array.isArray(result.data)) {
-            result.data.forEach(store => {
-                if (store.StoreFullName) {
-                    const option = document.createElement('option');
-                    option.value = store.StoreFullName;
-                    option.textContent = store.StoreFullName;
-                    storenameSelect.appendChild(option);
+            
+            // Function to fetch and populate store names
+            async function fetchAndPopulateStores() {
+                try {
+                    // Simulating fetch from the provided JSON file
+                    const storeData = [
+                        {"StoreCode": "6", "StoreName": "NMS", "StoreFullName": "Nathan Medicals S", "Address1": "Near Police Station", "Address2": "Perundurai"},
+                        {"StoreCode": "7", "StoreName": "NMC", "StoreFullName": "Nathan Medicals C", "Address1": "Old Bus Stand", "Address2": "Perundurai"},
+                        {"StoreCode": "8", "StoreName": "NMG", "StoreFullName": "Nathan Medicals G", "Address1": "Near Girls School", "Address2": "Perundurai"},
+                        {"StoreCode": "9", "StoreName": "NMA", "StoreFullName": "Nathan Medicals", "Address1": "Near Boys School", "Address2": "Perundurai"},
+                        {"StoreCode": "10", "StoreName": "SMA", "StoreFullName": "", "Address1": "", "Address2": ""}
+                    ];
+                    
+                    storeData.forEach(store => {
+                        if (store.StoreFullName) {
+                            const option = document.createElement('option');
+                            option.value = store.StoreFullName;
+                            option.textContent = store.StoreFullName;
+                            concernNameSelect.appendChild(option);
+                        }
+                    });
+                } catch (error) {
+                    console.error('Error fetching store headers:', error);
+                    // This is where you would show a notification to the user
                 }
-            });
-        }
-    } catch (error) {
-        console.error('Error fetching stores:', error);
-    }
-}
-fetchStores();
+            }
 
-            // AJAX login form submission
+            // Call the function to populate stores
+            fetchAndPopulateStores();
+
+            // Handle placeholder styling for input fields
+            const inputElements = document.querySelectorAll('.form-group input, .form-group select');
+            inputElements.forEach(input => {
+                const label = input.parentNode.querySelector('label');
+                if (label && input.value !== '') {
+                    input.parentNode.classList.add('focused');
+                }
+                
+                input.addEventListener('focus', () => {
+                    label.style.top = '-0.75rem';
+                    label.style.left = '0.5rem';
+                    label.style.fontSize = '0.75rem';
+                    label.style.color = '#4f46e5';
+                    label.style.zIndex = '10';
+                });
+
+                input.addEventListener('blur', () => {
+                    if (input.value === '') {
+                        label.style.top = '0.75rem';
+                        label.style.left = '1rem';
+                        label.style.fontSize = '1rem';
+                        label.style.color = '#6b7280';
+                        label.style.zIndex = 'auto';
+                    }
+                });
+            });
+
+            // Store form submission logic
             storeLoginForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
+                // This is where you would handle form submission, e.g., via fetch
                 const formData = new FormData(storeLoginForm);
                 const data = Object.fromEntries(formData.entries());
-                try {
-                    const response = await fetch('/login', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(data)
-                    });
-                    const result = await response.json();
-                    if (result.success) {
-                        window.location.href = result.redirect_url;
-                    } else {
-                        alert(result.error || 'Login failed');
-                    }
-                } catch (err) {
-                    alert("Network error. Please try again.");
-                }
+                console.log('Store login form submitted with data:', data);
+                alert('Store Login submitted! Check the console for data.');
             });
+            // Note: The previous version had a notification modal. I am replacing it with a simple alert for now.
         });
     </script>
 </body>

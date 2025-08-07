@@ -52,14 +52,17 @@
     th:nth-child(3), td:nth-child(3) {
       width: 40px;
     }
-    td:nth-child(5), th:nth-child(5),
+    td:nth-child(5), th:nth-child(5) {
+      width: 50px;
+      text-align: right;
+    }
     td:nth-child(4), th:nth-child(4) {
       width: 50px;
       text-align: right;
     }
     input[type="number"] {
       width: 40px;
-      font-size: 11px;
+      font-size: 12px;
     }
     .available {
       color: green;
@@ -71,12 +74,12 @@
       margin-top: 10px;
       background: #007bff;
       color: white;
-      padding: 4px 8px;
+      padding: 6px 12px;
       border: none;
       border-radius: 4px;
       cursor: pointer;
       margin-right: 6px;
-      font-size: 11px;
+      font-size: 12px;
     }
     .btn-save:hover, .btn-download:hover {
       background: #0056b3;
@@ -86,12 +89,12 @@
       text-align: center;
     }
     .pagination button {
-      padding: 4px 6px;
+      padding: 4px 8px;
       margin: 0 2px;
       background: #eee;
       border: 1px solid #ccc;
       cursor: pointer;
-      font-size: 11px;
+      font-size: 12px;
     }
     .pagination button.active {
       background: #007bff;
@@ -107,7 +110,7 @@
     </div>
     <div class="info-block">
       <strong id="supplierName">Supplier</strong><br>
-      <small>(Mobile: <span id="mobile">-</span> | GST: <span id="gst">-</span>)</small>
+      <small>(Mobile: <span id="mobile"></span> | GST: <span id="gst"></span>)</small>
     </div>
   </div>
 
@@ -119,7 +122,6 @@
         <th>Order Qty</th>
         <th>Pack</th>
         <th>MRP</th>
-        <th>Order Date</th>
         <th>Remarks</th>
       </tr>
     </thead>
@@ -142,15 +144,25 @@
 
     document.getElementById('supplierName').innerText = supplierName;
 
-    async function loadSupplierDetails() {
-      const res = await fetch('/get_supplier_info');
-      const data = await res.json();
-      const supplier = data.find(s => String(s.suppliercode) === String(supplierCode) && s.StoreName === storeName);
-      if (supplier) {
-        document.getElementById('mobile').innerText = supplier.MobileNumber || 'Not found';
-        document.getElementById('gst').innerText = supplier.GSTNumber || 'Not found';
-      }
-    }
+  async function loadSupplierDetails() {
+  const res = await fetch('/get_supplier_info');
+  const data = await res.json();
+
+  const supplier = data.find(s =>
+    String(s.suppliercode).trim() === String(supplierCode).trim() &&
+    String(s.StoreName).trim().toUpperCase() === String(storeName).trim().toUpperCase()
+  );
+
+  if (supplier) {
+    document.getElementById('supplierName').innerText = supplier.Suppliername || 'Supplier';
+    document.getElementById('mobile').innerText = supplier.MobileNumber || 'N/A';
+    document.getElementById('gst').innerText = supplier.GSTNumber || 'N/A';
+  } else {
+    document.getElementById('mobile').innerText = 'Not found';
+    document.getElementById('gst').innerText = 'Not found';
+  }
+}
+
 
     async function loadStoreDetails() {
       const res = await fetch('/get_store_headers');
@@ -166,22 +178,9 @@
       const res = await fetch(`/get_orders/${storeName}/${supplierCode}`);
       const result = await res.json();
       if (result.success) {
-        orders = result.data.map(item => ({
-          ...item,
-          MRP: parseFloat(item.mrp || item.MRP || 0).toFixed(2),
-          Pack: item.saleunit,
-          OrderDate: formatOrderDate(item.OrderId)
-        }));
+        orders = result.data;
         renderPage();
       }
-    }
-
-    function formatOrderDate(orderId) {
-      if (!orderId || orderId.length < 8) return '';
-      const y = orderId.substring(0, 4);
-      const m = orderId.substring(4, 6);
-      const d = orderId.substring(6, 8);
-      return `${d}-${m}-${y}`;
     }
 
     function renderPage() {
@@ -192,6 +191,7 @@
 
       for (let i = start; i < end; i++) {
         const item = orders[i];
+        const mrp = parseFloat(item.MRP || 0).toFixed(2);
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
@@ -199,8 +199,7 @@
           <td>${item.ProductName}</td>
           <td><input type="number" value="${item.OrderQty}" data-index="${i}" onchange="updateRemarks(this)"></td>
           <td>${item.Pack}</td>
-          <td>${item.MRP}</td>
-          <td>${item.OrderDate}</td>
+          <td>${mrp}</td>
           <td class="remarks available">Available ✅</td>
         `;
         tbody.appendChild(tr);

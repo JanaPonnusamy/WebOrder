@@ -14,5 +14,13 @@
     "suppliername": "NATHAN MEDICAL AGENCIES",
     "GSTNumber": "Test",
     "StoreName": "NMC"
+  },
+  {
+    "username": "1391",
+    "password": "pass",
+    "suppliercode": "1391",
+    "suppliername": "THANTHAI PHARMA DISTRIBUTOR",
+    "GSTNumber": "Test",
+    "StoreName": "NMC"
   }
 ]

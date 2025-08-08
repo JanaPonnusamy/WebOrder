@@ -14,7 +14,6 @@
       margin: 0;
       padding: 10px;
       color: #333;
-      text-align: center;
     }
     .header {
       background: linear-gradient(to right, #6a11cb, #2575fc);
@@ -34,7 +33,8 @@
       min-width: 200px;
     }
     table {
-      margin: 0 auto;
+      width: 100%;
+      margin-top: 10px;
       border-collapse: collapse;
       background: white;
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
@@ -43,24 +43,14 @@
       border: 1px solid #ddd;
       padding: 2px 4px;
       font-size: 11px;
+      text-align: left;
     }
     th {
       background: #f3f4f6;
     }
-    th:nth-child(1), td:nth-child(1) { text-align: center; width: 50px; }
-    th:nth-child(2), td:nth-child(2) { text-align: right; width: 80px; }
-    th:nth-child(3), td:nth-child(3) { text-align: left; width: 280px; }
-    th:nth-child(4), td:nth-child(4) { text-align: right; width: 70px; }
-    th:nth-child(5), td:nth-child(5) { text-align: right; width: 60px; }
-    th:nth-child(6), td:nth-child(6) { text-align: center; width: 60px; }
-    th:nth-child(7), td:nth-child(7) { text-align: right; width: 80px; }
-    th:nth-child(8), td:nth-child(8) { text-align: center; width: 100px; }
-    th:nth-child(9), td:nth-child(9) { text-align: center; width: 100px; }
-    th:nth-child(10), td:nth-child(10) { text-align: left; width: 120px; }
-
     input[type="number"] {
       width: 40px;
-      font-size: 12px;
+      font-size: 11px;
     }
     .available {
       color: green;
@@ -162,10 +152,12 @@
     async function loadStoreDetails() {
       const res = await fetch('/get_store_headers');
       const data = await res.json();
-      const store = data.find(s => (s.StoreName || '').toUpperCase() === storeName.toUpperCase());
+      console.log("All store headers:", data);
+      const store = data.find(s => s.StoreName === storeName);
+      console.log("Store found:", store);
       if (store) {
         document.getElementById('storeFullName').innerText = store.StoreFullName;
-        document.getElementById('storeAddress').innerText = `${store.Address1 || ''}, ${store.Address2 || ''}`;
+        document.getElementById('storeAddress').innerText = `${store.Address1}, ${store.Address2}`;
       }
     }
 
@@ -259,71 +251,34 @@
     function saveChanges() {
       console.log("Changes saved:", orders);
     }
-function downloadExcel() {
-  saveChanges();
-  const visibleData = orders.map(o => ({
-    "S.No": orders.indexOf(o) + 1,
-    "Product Code": o.ProductCode,
-    "Product Name": o.ProductName,
-    "Order Qty": o.OrderQty,
-    "Pack": o.Pack,
-    "Unit": o.UnitDescription,
-    "MRP": o.MRP,
-    "Order Date": o.OrderDate,
-    "Order ID": o.OrderId,
-    "Remarks": "Available"
-  }));
-  const ws = XLSX.utils.json_to_sheet(visibleData);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Orders");
-  XLSX.writeFile(wb, `Order_${storeName}_${supplierCode}.xlsx`);
-}
 
+    function downloadExcel() {
+      saveChanges();
+      const ws = XLSX.utils.json_to_sheet(orders);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Orders");
+      XLSX.writeFile(wb, `Order_${storeName}_${supplierCode}.xlsx`);
+    }
 
-function downloadPDF() {
-  saveChanges();
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'A4' });
-
-  doc.setFontSize(14);
-  doc.text(`Order List - ${document.getElementById('storeFullName').innerText}`, 40, 30);
-
-  const headers = [[
-    "S.No", "Product Code", "Product Name", "Order Qty",
-    "Pack", "Unit", "MRP", "Order Date", "Order ID", "Remarks"
-  ]];
-
-  const data = orders.map((o, i) => [
-    i + 1,
-    o.ProductCode,
-    o.ProductName,
-    o.OrderQty,
-    o.Pack,
-    o.UnitDescription,
-    o.MRP,
-    o.OrderDate,
-    o.OrderId,
-    "Available"
-  ]);
-
-  doc.autoTable({
-    head: headers,
-    body: data,
-    startY: 50,
-    styles: { fontSize: 8 },
-    margin: { left: 30, right: 30 },
-    headStyles: { fillColor: [58, 108, 180] },
-    alternateRowStyles: { fillColor: [240, 240, 240] }
-  });
-
-  doc.save(`Order_${storeName}_${supplierCode}.pdf`);
-}
+    function downloadPDF() {
+      saveChanges();
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      doc.setFontSize(12);
+      doc.text(`Order List - ${document.getElementById('storeFullName').innerText}`, 10, 10);
+      let y = 20;
+      orders.forEach((o, i) => {
+        const line = `${i + 1}. ${o.ProductName} - ${o.OrderQty} x ${o.Pack} - ₹${parseFloat(o.MRP).toFixed(2)}`;
+        doc.text(line, 10, y);
+        y += 7;
+        if (y > 280) { doc.addPage(); y = 20; }
+      });
+      doc.save(`Order_${storeName}_${supplierCode}.pdf`);
+    }
 
     loadSupplierDetails();
     loadStoreDetails();
     loadOrders();
   </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-
 </body>
 </html>

@@ -77,10 +77,15 @@ def login():
         data = request.json
         username = data.get('username')
         password = data.get('password')
-        storename = data.get('storename')
-        
+        storefullname = data.get('storename')  # This is actually StoreFullName
+
         users = load_json(USERS_FILE)
-        
+        store_headers = load_json(STORE_HEADERS_FILE)
+
+        # Lookup short store name (StoreName) from full name
+        store_match = next((s for s in store_headers if s['StoreFullName'].strip() == storefullname.strip()), None)
+        short_store_name = store_match['StoreName'] if store_match else storefullname  # fallback
+
         user = next((u for u in users if u['username'] == username and u['password'] == password), None)
 
         if user:
@@ -88,14 +93,18 @@ def login():
             session['username'] = user['username']
             session['suppliercode'] = user['suppliercode']
             session['suppliername'] = user['suppliername']
-            session['storename'] = storename
-            print(f"User {username} logged in successfully for store {storename}.")
+            session['storename'] = short_store_name  # use short name like "NMC"
+            session['storefullname'] = storefullname  # save full name too if needed
+
+            print(f"[LOGIN] User: {username} | StoreFullName: {storefullname} → StoreName: {short_store_name}")
+            print(f"[LOGIN] SupplierCode: {user['suppliercode']} | SupplierName: {user['suppliername']}")
             return jsonify({'success': True, 'redirect_url': url_for('dashboard')})
         else:
-            print(f"Login failed for user {username}.")
+            print(f"[LOGIN FAILED] Username: {username}")
             return jsonify({'success': False, 'error': 'Invalid username or password'}), 401
 
     return render_template('login.html')
+
 
 @app.route('/dashboard')
 @login_required
@@ -122,47 +131,56 @@ def get_store_headers():
     else:
         return jsonify({'success': False, 'error': 'Could not load store data.'})
 
-@app.route('/get_orders/<string:storename>/<string:suppliercode>', methods=['GET'])
-@login_required
-def get_orders(storename, suppliercode):
-    """
-    Fetches order details for a specific store and supplier.
-    Maps raw JSON keys (like productcode) to frontend-expected keys (ProductCode).
-    """
-    # Sanitize inputs
-    sanitized_storename = os.path.basename(storename)
-    sanitized_suppliercode = os.path.basename(suppliercode)
+@app.route('/get_orders/<store>/<supplier>')
+def get_orders(store, supplier):
+    try:
+        filename = f"data/{store}_{supplier}.json"
+        print(f"[INFO] Fetching orders from file: {filename}")
+        with open(filename, 'r', encoding='utf-8-sig') as f:
+            raw_orders = json.load(f)
 
-    # Normalize StoreFullName → StoreName
-    store_headers = load_json(STORE_HEADERS_FILE)
-    matched = next((s for s in store_headers if s['StoreFullName'] == sanitized_storename), None)
-    actual_storename = matched['StoreName'] if matched else sanitized_storename
+        # Optional: Normalize or log fields here if needed
+        print(f"[INFO] Loaded {len(raw_orders)} records from {filename}")
 
-    filename = f"{actual_storename}_{sanitized_suppliercode}.json"
-    file_path = os.path.join(DATA_DIR, filename)
+        return jsonify({'success': True, 'data': raw_orders})
 
-    raw_orders = load_json(file_path)
+    except FileNotFoundError:
+        print(f"[ERROR] File not found: {store}_{supplier}.json")
+        return jsonify({'success': False, 'message': f"No order file for store '{store}' and supplier '{supplier}'."})
 
-    if not raw_orders:
-        return jsonify({'success': True, 'data': [], 'message': 'No orders found.'})
+    except Exception as e:
+        print(f"[ERROR] get_orders: {str(e)}")
+        return jsonify({'success': False, 'message': 'Failed to fetch orders.'})
 
-    normalized_orders = []
-    for item in raw_orders:
-        normalized = {
-    "SerialNo": item.get("SerialNo", ""),
-    "ProductCode": item.get("productcode", ""),
-    "ProductName": item.get("productname", ""),
-    "OrderQty": str(item.get("orderqty", "")),
-    "Pack": item.get("saleunit", ""),  # Add this
-    "MRP": item.get("mrp", ""),         # Add this
-    "remarks": item.get("remarks", "Available ✅"),  # Default
-    "OrderId": item.get("OrderId", ""),
-    "StoreName": item.get("StoreName", "")
-}
 
-        normalized_orders.append(normalized)
+        filtered = [
+            o for o in all_orders
+            if str(o.get("StoreName", "")).strip().upper() == store.strip().upper()
+            and str(o.get("suppliercode", "")).strip() == str(supplier).strip()
+        ]
 
-    return jsonify({'success': True, 'data': normalized_orders})
+        normalized_orders = []
+        for item in filtered:
+            normalized = {
+                "SerialNo": item.get("SerialNo", ""),
+                "ProductCode": item.get("productcode", ""),
+                "ProductName": item.get("productname", ""),
+                "OrderQty": str(item.get("orderqty", "")),
+                "Pack": item.get("saleunit", ""),
+                "UnitDescription": item.get("UnitDescription", ""),
+                "MRP": item.get("mrp", ""),
+                "remarks": item.get("remarks", "Available ✅"),
+                "OrderId": item.get("OrderId", ""),
+                "StoreName": item.get("StoreName", "")
+            }
+            normalized_orders.append(normalized)
+
+        return jsonify({"success": True, "data": normalized_orders})
+
+    except Exception as e:
+        print(f"[ERROR] get_orders: {e}")
+        return jsonify({"success": False, "message": str(e)})
+
 
 
 @app.route('/send_whatsapp_message', methods=['POST'])

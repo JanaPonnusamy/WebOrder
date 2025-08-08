@@ -159,15 +159,20 @@
       }
     }
 
-    async function loadStoreDetails() {
-      const res = await fetch('/get_store_headers');
-      const data = await res.json();
-      const store = data.find(s => (s.StoreName || '').toUpperCase() === storeName.toUpperCase());
-      if (store) {
-        document.getElementById('storeFullName').innerText = store.StoreFullName;
-        document.getElementById('storeAddress').innerText = `${store.Address1 || ''}, ${store.Address2 || ''}`;
-      }
-    }
+async function loadStoreDetails() {
+  const res = await fetch('/get_store_headers');
+  const data = await res.json();
+  console.log("All store headers:", data);
+  const store = data.find(s => String(s.StoreName).trim().toUpperCase() === String(storeName).trim().toUpperCase());
+  console.log("Store found:", store);
+  if (store) {
+    document.getElementById('storeFullName').innerText = store.StoreFullName;
+    document.getElementById('storeAddress').innerText = `${store.Address1}, ${store.Address2}`;
+  } else {
+    document.getElementById('storeFullName').innerText = storeName;
+    document.getElementById('storeAddress').innerText = "";
+  }
+}
 
     async function loadOrders() {
       const res = await fetch(`/get_orders/${storeName}/${supplierCode}`);

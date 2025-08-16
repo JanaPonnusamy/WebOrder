@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
   <style>
     body {
       font-family: 'Inter', sans-serif;
@@ -14,7 +15,6 @@
       margin: 0;
       padding: 10px;
       color: #333;
-      text-align: center;
     }
     .header {
       background: linear-gradient(to right, #6a11cb, #2575fc);
@@ -28,12 +28,42 @@
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
       margin-bottom: 10px;
     }
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    .header {
+      top: 0;
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+    }
+    .footer {
+      bottom: 0;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+      justify-content: center;
+      font-size: 12px;
+    }
     .header .info-block {
       font-size: 13px;
       line-height: 1.4;
       min-width: 200px;
     }
+    .logout-button {
+      background: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 4px 8px;
+      cursor: pointer;
+      font-size: 11px;
+    }
+    .logout-button:hover {
+      background: #c82333;
+    }
     table {
+      width: auto;
       margin: 0 auto;
       border-collapse: collapse;
       background: white;
@@ -44,30 +74,22 @@
       padding: 2px 4px;
       font-size: 11px;
     }
-    th {
-      background: #f3f4f6;
-    }
-    th:nth-child(1), td:nth-child(1) { text-align: center; width: 50px; }
+    th:nth-child(1), td:nth-child(1) { text-align: center; width: 30px; }
     th:nth-child(2), td:nth-child(2) { text-align: right; width: 80px; }
-    th:nth-child(3), td:nth-child(3) { text-align: left; width: 280px; }
-    th:nth-child(4), td:nth-child(4) { text-align: right; width: 70px; }
-    th:nth-child(5), td:nth-child(5) { text-align: right; width: 60px; }
-    th:nth-child(6), td:nth-child(6) { text-align: center; width: 60px; }
-    th:nth-child(7), td:nth-child(7) { text-align: right; width: 80px; }
-    th:nth-child(8), td:nth-child(8) { text-align: center; width: 100px; }
-    th:nth-child(9), td:nth-child(9) { text-align: center; width: 100px; }
-    th:nth-child(10), td:nth-child(10) { text-align: left; width: 120px; }
-
+    th:nth-child(3), td:nth-child(3) { text-align: left; width: 180px; }
+    th:nth-child(4), td:nth-child(4) { text-align: right; width: 50px; }
+    th:nth-child(5), td:nth-child(5) { text-align: right; width: 40px; }
+    th:nth-child(6), td:nth-child(6) { text-align: center; width: 50px; }
+    th:nth-child(7), td:nth-child(7) { text-align: right; width: 60px; }
+    th:nth-child(8), td:nth-child(8) { text-align: center; width: 80px; }
+    th:nth-child(9), td:nth-child(9) { text-align: center; width: 80px; }
+    th:nth-child(10), td:nth-child(10) { text-align: left; width: 100px; }
     input[type="number"] {
       width: 40px;
-      font-size: 12px;
+      font-size: 11px;
     }
-    .available {
-      color: green;
-    }
-    .not-available {
-      color: red;
-    }
+    .available { color: green; }
+    .not-available { color: red; }
     .btn-save, .btn-download {
       margin-top: 10px;
       background: #007bff;
@@ -110,6 +132,7 @@
       <div><strong id="storeFullName">Loading Store...</strong></div>
       <div style="font-size: 11px;" id="storeAddress"></div>
     </div>
+    <button class="logout-button" onclick="logout()">Logout</button>
   </div>
   <table>
     <thead>
@@ -132,26 +155,36 @@
   <button class="btn-save" onclick="saveChanges()">Save Changes</button>
   <button class="btn-download" onclick="downloadExcel()">Download Excel</button>
   <button class="btn-download" onclick="downloadPDF()">Download PDF</button>
+
   <script>
     const storeName = "{{ store_name }}";
     const supplierCode = "{{ supplier_code }}";
-
-    console.log("Login Session StoreName:", storeName);
-    console.log("Login Session SupplierCode:", supplierCode);
-
+    let orders = [];
     const rowsPerPage = 20;
     let currentPage = 1;
-    let orders = [];
 
-    async function loadSupplierDetails() {
+   async function loadStoreDetails() {
+      try {
+        const res = await fetch('/get_store_headers');
+        const data = await res.json();
+        console.log("Store Headers:", data);
+        const store = data.find(s => s.StoreName === '{{ store_name }}');
+        console.log("Resolved Store:", store);
+        if (store) {
+          document.getElementById('storeFullName').innerText = store.StoreFullName;
+          document.getElementById('storeAddress').innerText = `${store.Address1}, ${store.Address2}`;
+        } else {
+          document.getElementById('storeFullName').innerText = 'Store Not Found';
+        }
+      } catch (err) {
+        console.error("Failed to load store headers", err);
+      }
+    }
+
+      async function loadSupplierDetails() {
       const res = await fetch('/get_supplier_info');
       const data = await res.json();
-      console.log("All supplier info:", data);
-      const supplier = data.find(s => 
-        String(s.suppliercode).trim() === String(supplierCode).trim() &&
-        String(s.StoreName).trim().toUpperCase() === String(storeName).trim().toUpperCase()
-      );
-      console.log("Supplier found:", supplier);
+      const supplier = data.find(s => String(s.suppliercode).trim() === supplierCode.trim() && s.StoreName.toUpperCase() === storeName.toUpperCase());
       if (supplier) {
         document.getElementById('supplierName').innerText = supplier.Suppliername || 'Supplier';
         document.getElementById('mobile').innerText = supplier.MobileNumber || 'N/A';
@@ -159,42 +192,22 @@
       }
     }
 
-    async function loadStoreDetails() {
-      const res = await fetch('/get_store_headers');
-      const data = await res.json();
-      const store = data.find(s => (s.StoreName || '').toUpperCase() === storeName.toUpperCase());
-      if (store) {
-        document.getElementById('storeFullName').innerText = store.StoreFullName;
-        document.getElementById('storeAddress').innerText = `${store.Address1 || ''}, ${store.Address2 || ''}`;
-      }
-    }
-
     async function loadOrders() {
       const res = await fetch(`/get_orders/${storeName}/${supplierCode}`);
       const result = await res.json();
-      console.log("Fetched orders:", result);
       if (result.success) {
-        orders = result.data.map(o => {
-          const orderDate = o.OrderId ? `${o.OrderId.substring(6,8)}-${o.OrderId.substring(4,6)}-${o.OrderId.substring(0,4)}` : '';
-          return {
-            ...o,
-            ProductCode: o.ProductCode || o.Productcode || o.productcode || '',
-            ProductName: o.ProductName || o.Productname || o.productname || '',
-            OrderQty: o.OrderQty || o.Orderqty || o.orderqty || 0,
-            Pack: o.Pack || o.SaleUnit || o.saleunit || '',
-            UnitDescription: o.UnitDescription || '',
-            MRP: parseFloat(o.MRP || o.mrp || 0).toFixed(2),
-            OrderDate: orderDate,
-            OrderId: o.OrderId || ''
-          };
-        });
-
-        orders.forEach((o, i) => {
-          if (!o.ProductName) {
-            console.warn("Missing ProductName in row", i + 1, o);
-          }
-        });
-
+        orders = result.data.map((o, i) => ({
+          SNo: i + 1,
+          ProductCode: o.ProductCode || o.Productcode || '',
+          ProductName: o.ProductName || o.Productname || '',
+          OrderQty: o.OrderQty || 0,
+          Pack: o.Pack || o.SaleUnit || '',
+          Unit: o.UnitDescription || '',
+          MRP: parseFloat(o.MRP || 0).toFixed(2),
+          OrderDate: o.OrderId ? `${o.OrderId.substring(6,8)}-${o.OrderId.substring(4,6)}-${o.OrderId.substring(0,4)}` : '',
+          OrderId: o.OrderId || '',
+          Remarks: 'Available ✅'
+        }));
         renderPage();
       }
     }
@@ -208,16 +221,16 @@
         const o = orders[i];
         const row = document.createElement('tr');
         row.innerHTML = `
-          <td>${i + 1}</td>
+          <td>${o.SNo}</td>
           <td>${o.ProductCode}</td>
           <td>${o.ProductName}</td>
           <td><input type="number" value="${o.OrderQty}" data-index="${i}" onchange="updateRemarks(this)"></td>
           <td>${o.Pack}</td>
-          <td>${o.UnitDescription}</td>
+          <td>${o.Unit}</td>
           <td style="text-align:right">${o.MRP}</td>
           <td>${o.OrderDate}</td>
           <td>${o.OrderId}</td>
-          <td class="remarks available">Available ✅</td>
+          <td class="remarks available">${o.Remarks}</td>
         `;
         tbody.appendChild(row);
       }
@@ -257,73 +270,44 @@
     }
 
     function saveChanges() {
-      console.log("Changes saved:", orders);
+      console.log("Saved changes", orders);
     }
-function downloadExcel() {
-  saveChanges();
-  const visibleData = orders.map(o => ({
-    "S.No": orders.indexOf(o) + 1,
-    "Product Code": o.ProductCode,
-    "Product Name": o.ProductName,
-    "Order Qty": o.OrderQty,
-    "Pack": o.Pack,
-    "Unit": o.UnitDescription,
-    "MRP": o.MRP,
-    "Order Date": o.OrderDate,
-    "Order ID": o.OrderId,
-    "Remarks": "Available"
-  }));
-  const ws = XLSX.utils.json_to_sheet(visibleData);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Orders");
-  XLSX.writeFile(wb, `Order_${storeName}_${supplierCode}.xlsx`);
-}
 
+    function downloadExcel() {
+      saveChanges();
+      const visible = orders.map(({ SNo, ProductCode, ProductName, OrderQty, Pack, Unit, MRP, OrderDate, OrderId, Remarks }) => ({
+        SNo, ProductCode, ProductName, OrderQty, Pack, Unit, MRP, OrderDate, OrderId, Remarks
+      }));
+      const ws = XLSX.utils.json_to_sheet(visible);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Orders');
+      XLSX.writeFile(wb, `Order_${storeName}_${supplierCode}.xlsx`);
+    }
 
-function downloadPDF() {
-  saveChanges();
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'A4' });
+    function downloadPDF() {
+      saveChanges();
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      doc.setFontSize(10);
+      doc.text(`Order List - ${storeName}`, 10, 10);
+      doc.autoTable({
+        head: [["S.No", "Product Code", "Product Name", "Qty", "Pack", "Unit", "MRP", "Date", "Order ID", "Remarks"]],
+        body: orders.map(o => [o.SNo, o.ProductCode, o.ProductName, o.OrderQty, o.Pack, o.Unit, o.MRP, o.OrderDate, o.OrderId, o.Remarks]),
+        startY: 15,
+        styles: { fontSize: 8 }
+      });
+      doc.save(`Order_${storeName}_${supplierCode}.pdf`);
+    }
 
-  doc.setFontSize(14);
-  doc.text(`Order List - ${document.getElementById('storeFullName').innerText}`, 40, 30);
+    function logout() {
+      localStorage.removeItem("storeName");
+      localStorage.removeItem("supplierCode");
+      window.location.href = '/login';
+    }
 
-  const headers = [[
-    "S.No", "Product Code", "Product Name", "Order Qty",
-    "Pack", "Unit", "MRP", "Order Date", "Order ID", "Remarks"
-  ]];
-
-  const data = orders.map((o, i) => [
-    i + 1,
-    o.ProductCode,
-    o.ProductName,
-    o.OrderQty,
-    o.Pack,
-    o.UnitDescription,
-    o.MRP,
-    o.OrderDate,
-    o.OrderId,
-    "Available"
-  ]);
-
-  doc.autoTable({
-    head: headers,
-    body: data,
-    startY: 50,
-    styles: { fontSize: 8 },
-    margin: { left: 30, right: 30 },
-    headStyles: { fillColor: [58, 108, 180] },
-    alternateRowStyles: { fillColor: [240, 240, 240] }
-  });
-
-  doc.save(`Order_${storeName}_${supplierCode}.pdf`);
-}
-
-    loadSupplierDetails();
     loadStoreDetails();
+    loadSupplierDetails();
     loadOrders();
   </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-
 </body>
 </html>
